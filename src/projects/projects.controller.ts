@@ -17,11 +17,11 @@ import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 
 @Controller('projects')
 @UseGuards(AuthGuard)
-@AuthFlag('privateRoute')
 export class ProjectsController {
   constructor(private readonly ProjectsService: ProjectsService) {}
 
   @Post('add-project')
+  @AuthFlag('privateRoute')
   async addNewProjectByAdmin(@Body() projectRequests: CreateProjectDTO) {
     try {
       const response =
@@ -33,6 +33,7 @@ export class ProjectsController {
   }
 
   @Put(':id')
+  @AuthFlag('privateRoute')
   async updateProjectByAdmin(
     @Param('id') id: string,
     @Body() projectRequests: UpdateProjectDTO,
@@ -49,6 +50,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
+  @AuthFlag('privateRoute')
   async deleteProjectFromList(@Param('id') id: string) {
     try {
       const response = await this.ProjectsService.deleteProjectFromList(id);
@@ -59,6 +61,7 @@ export class ProjectsController {
   }
 
   @Get()
+  @AuthFlag('privateRoute')
   async getAllProjects() {
     try {
       const response = await this.ProjectsService.getAllProjects();

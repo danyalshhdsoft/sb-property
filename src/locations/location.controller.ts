@@ -6,7 +6,6 @@ import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller('locations')
 @UseGuards(AuthGuard)
-@AuthFlag('privateRoute')
 export class LocationsController {
   constructor(private readonly LocationsService: LocationsService) {}
 
@@ -22,12 +21,14 @@ export class LocationsController {
 
   // Endpoint for autocomplete search box
   @Get('autocomplete')
+  @AuthFlag('privateRoute')
   async getAutocomplete(@Query('input') input: string) {
     return this.LocationsService.getAutocomplete(input);
   }
 
   // Endpoint for autocomplete search box
   @Get('restricted-location-auto-complete')
+  @AuthFlag('privateRoute')
   async getLocationRestrictedAutoComplete(
     @Query('input') input: string,
     @Query('latitude') latitude: number,
@@ -42,6 +43,7 @@ export class LocationsController {
 
   // Endpoint for fetching place details
   @Get('details')
+  @AuthFlag('privateRoute')
   async getPlaceDetails(@Query('placeId') placeId: string) {
     const placeDetails = await this.LocationsService.getPlaceDetails(placeId);
 
@@ -58,6 +60,7 @@ export class LocationsController {
 
   // Endpoint for autocomplete search box
   @Get('geocode')
+  @AuthFlag('privateRoute')
   async getGeocode(@Query('input') input: string) {
     return this.LocationsService.getGeocodeResponse(input);
   }

@@ -21,7 +21,6 @@ import { ClientKafka } from '@nestjs/microservices';
 
 @Controller('properties')
 @UseGuards(AuthGuard)
-@AuthFlag('privateRoute')
 export class PropertiesController implements OnModuleInit {
   constructor(
     private readonly propertiesService: PropertiesService,
@@ -31,6 +30,7 @@ export class PropertiesController implements OnModuleInit {
   ) {}
 
   @Post('add-properties')
+  @AuthFlag('privateRoute')
   async addNewPropertyByAdmin(@Body() propertyRequests: CreatePropertyDto) {
     const result =
       await this.propertiesService.addNewPropertyByAdmin(propertyRequests);
@@ -38,6 +38,7 @@ export class PropertiesController implements OnModuleInit {
   }
 
   @Put(':id')
+  @AuthFlag('privateRoute')
   async updatePropertyByAdmin(
     @Param('id') id: string,
     @Body() propertyRequests: UpdatePropertyDto,
@@ -50,12 +51,14 @@ export class PropertiesController implements OnModuleInit {
   }
 
   @Get()
+  @AuthFlag('privateRoute')
   async getAllPropertyLists() {
     const result = await this.propertiesService.getAllPropertyLists();
     return new ApiResponse(result);
   }
 
   @Delete(':id')
+  @AuthFlag('privateRoute')
   async deletePropertyFromList(@Param('id') id: string) {
     const result = await this.propertiesService.deletePropertyFromList(id);
     return new ApiResponse(result);

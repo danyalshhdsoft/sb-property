@@ -19,7 +19,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class LocationsService {
-  private googleApiKey = 'AIzaSyC9Js_Og-2udmONOz5-Xevvv6gW9Uv4dG0';
+  private googleApiKey = this.config.get<string>('GOOGLE_API_KEY');
   constructor(
     @InjectModel(Locations.name)
     private LocationsModel: Model<Locations>,

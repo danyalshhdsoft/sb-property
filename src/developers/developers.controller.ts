@@ -17,11 +17,11 @@ import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 
 @Controller('developers')
 @UseGuards(AuthGuard)
-@AuthFlag('privateRoute')
 export class DevelopersController {
   constructor(private readonly DevelopersService: DevelopersService) {}
 
   @Get()
+  @AuthFlag('privateRoute')
   async getAllDevelopers() {
     try {
       const response = await this.DevelopersService.getAllDevelopers();
@@ -32,6 +32,7 @@ export class DevelopersController {
   }
 
   @Post('add-developer')
+  @AuthFlag('privateRoute')
   async addNewDeveloperByAdmin(@Body() developerRequests: CreateDeveloperDTO) {
     try {
       const response =
@@ -43,6 +44,7 @@ export class DevelopersController {
   }
 
   @Put(':id')
+  @AuthFlag('privateRoute')
   async updateDeveloperByAdmin(
     @Param('id') id: string,
     @Body() developerRequests: UpdateDeveloperDTO,
@@ -59,6 +61,7 @@ export class DevelopersController {
   }
 
   @Delete(':id')
+  @AuthFlag('privateRoute')
   async deleteDeveloperFromList(@Param('id') id: string) {
     try {
       const response = await this.DevelopersService.deleteDeveloperFromList(id);
