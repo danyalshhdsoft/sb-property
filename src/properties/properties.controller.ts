@@ -1,70 +1,72 @@
-import {
-  Controller,
-  Post,
-  Param,
-  Body,
-  Put,
-  Get,
-  Delete,
-  UseGuards,
-  Inject,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
-import ApiResponse from '@/src/utils/api-response.util';
-
-import { CreatePropertyDto } from './dto/create-property.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
-import { AuthFlag } from '../common/decorators/auth-flag.decorator';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { ClientKafka } from '@nestjs/microservices';
+// import { AuthFlag } from '../common/decorators/auth-flag.decorator';
+// import { AuthGuard } from '../common/guards/auth.guard';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('properties')
-@UseGuards(AuthGuard)
-export class PropertiesController implements OnModuleInit {
-  constructor(
-    private readonly propertiesService: PropertiesService,
-    //Need to make this subscribeToResponseOf moduleinit global instead of doing this in all controllers
-    //after finishing above task we can push these new changes
-    @Inject('AUTH_SERVICE') private readonly authClient: ClientKafka,
-  ) {}
+// @UseGuards(AuthGuard)
+export class PropertiesController {
+  constructor(private readonly propertiesService: PropertiesService) {}
 
-  @Post('add-properties')
-  @AuthFlag('privateRoute')
-  async addNewPropertyByAdmin(@Body() propertyRequests: CreatePropertyDto) {
-    const result =
-      await this.propertiesService.addNewPropertyByAdmin(propertyRequests);
-    return new ApiResponse(result);
+  @MessagePattern('add_properties')
+  async addNewPropertyByAdmin(data: any) {
+    return await this.propertiesService.addNewPropertyByAdmin(data);
   }
 
-  @Put(':id')
-  @AuthFlag('privateRoute')
-  async updatePropertyByAdmin(
-    @Param('id') id: string,
-    @Body() propertyRequests: UpdatePropertyDto,
-  ) {
+  // @Post('add-properties')
+  // @AuthFlag('privateRoute')
+  // async addNewPropertyByAdmin(@Body() propertyRequests: CreatePropertyDto) {
+  //   const result =
+  //     await this.propertiesService.addNewPropertyByAdmin(propertyRequests);
+  //   return new ApiResponse(result);
+  // }
+
+  @MessagePattern('update_properties')
+  async updatePropertyByAdmin(data: any) {
     const result = await this.propertiesService.updatePropertyByAdmin(
-      id,
-      propertyRequests,
+      data.id,
+      data.data,
     );
-    return new ApiResponse(result);
+    return result;
   }
 
-  @Get()
-  @AuthFlag('privateRoute')
+  // @Put(':id')
+  // @AuthFlag('privateRoute')
+  // async updatePropertyByAdmin(
+  //   @Param('id') id: string,
+  //   @Body() propertyRequests: UpdatePropertyDto,
+  // ) {
+  //   const result = await this.propertiesService.updatePropertyByAdmin(
+  //     id,
+  //     propertyRequests,
+  //   );
+  //   return new ApiResponse(result);
+  // }
+
+  @MessagePattern('retrieve_properties')
   async getAllPropertyLists() {
     const result = await this.propertiesService.getAllPropertyLists();
-    return new ApiResponse(result);
+    return result;
   }
 
-  @Delete(':id')
-  @AuthFlag('privateRoute')
-  async deletePropertyFromList(@Param('id') id: string) {
+  // @Get()
+  // @AuthFlag('privateRoute')
+  // async getAllPropertyLists() {
+  //   const result = await this.propertiesService.getAllPropertyLists();
+  //   return new ApiResponse(result);
+  // }
+
+  @MessagePattern('delete_properties')
+  async deletePropertyFromList(id: string) {
     const result = await this.propertiesService.deletePropertyFromList(id);
-    return new ApiResponse(result);
+    return result;
   }
 
-  onModuleInit() {
-    this.authClient.subscribeToResponseOf('authorize_user');
-  }
+  // @Delete(':id')
+  // @AuthFlag('privateRoute')
+  // async deletePropertyFromList(@Param('id') id: string) {
+  //   const result = await this.propertiesService.deletePropertyFromList(id);
+  //   return new ApiResponse(result);
+  // }
 }
