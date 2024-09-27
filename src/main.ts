@@ -2,6 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
+import {
+  KAFKA_CONSUMER_GROUP_ID,
+  KAFKA_OPTIONS_CLIENT_ID,
+} from './utils/constants/kafka-const';
 //do not remove this validation pipe code.Check when you can.Fix It. Use It.
 //Also check the @IsUniqueSlug used where AmenitiesDTO is called.
 //And if everything is fine then remove this and above line comments
@@ -22,47 +26,12 @@ async function bootstrap() {
     transport: Transport.KAFKA,
     options: {
       client: {
-        clientId: 'properties-service',
+        clientId: KAFKA_OPTIONS_CLIENT_ID.properties_service,
+        //brokers: ['host.docker.internal:9092'],
         brokers: ['localhost:9092'],
       },
       consumer: {
-        groupId: 'properties-consumer',
-      },
-    },
-  });
-  app.connectMicroservice({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'projects-service',
-        brokers: ['localhost:9092'],
-      },
-      consumer: {
-        groupId: 'projects-consumer',
-      },
-    },
-  });
-  app.connectMicroservice({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'developers-service',
-        brokers: ['localhost:9092'],
-      },
-      consumer: {
-        groupId: 'developers-consumer',
-      },
-    },
-  });
-  app.connectMicroservice({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'locations-service',
-        brokers: ['localhost:9092'],
-      },
-      consumer: {
-        groupId: 'locations-consumer',
+        groupId: KAFKA_CONSUMER_GROUP_ID.properties_consumer,
       },
     },
   });

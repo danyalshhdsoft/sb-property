@@ -74,41 +74,41 @@ export class Buildings {
     default: '',
   })
   placeId: string;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  yearOfCompletion: number;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  totalFloors: number;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  totalRetailCenters: number;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  totalParkingSlots: number;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  totalBuildingArea: number;
-  @Prop({
-    type: Number,
-    default: 0,
-  })
-  totalElevators: number;
-  @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
-    default: [],
-  })
-  buildingDocuments: mongoose.Schema.Types.ObjectId[];
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // yearOfCompletion: number;
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // totalFloors: number;
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // totalRetailCenters: number;
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // totalParkingSlots: number;
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // totalBuildingArea: number;
+  // @Prop({
+  //   type: Number,
+  //   default: 0,
+  // })
+  // totalElevators: number;
+  // @Prop({
+  //   type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
+  //   default: [],
+  // })
+  // buildingDocuments: mongoose.Schema.Types.ObjectId[];
   @Prop({
     required: true,
     type: mongoose.Schema.Types.ObjectId,
@@ -116,20 +116,20 @@ export class Buildings {
     default: null,
   })
   location: mongoose.Schema.Types.ObjectId;
-  @Prop({ type: [mongoose.Schema.Types.Mixed], default: [] }) //add few more enum values
-  amenities: Amenities[];
-  @Prop({
-    required: true,
-    type: mongoose.Schema.Types.ObjectId,
-    ref: Developers.name,
-    default: null,
-  })
-  developerId: mongoose.Schema.Types.ObjectId;
+  // @Prop({ type: [mongoose.Schema.Types.Mixed], default: [] }) //add few more enum values
+  // amenities: Amenities[];
+  // @Prop({
+  //   required: true,
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: Developers.name,
+  //   default: null,
+  // })
+  // developerId: mongoose.Schema.Types.ObjectId;
   @Prop({
     required: true,
     type: String,
     enum: STATUS,
-    default: STATUS.PENDING,
+    default: STATUS.APPROVED,
   })
   status: string;
   @Prop({

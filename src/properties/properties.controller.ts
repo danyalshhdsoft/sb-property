@@ -3,13 +3,13 @@ import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
-
+import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
 @Controller('properties')
 // @UseGuards(AuthGuard)
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  @MessagePattern('add_properties')
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
   async addNewPropertyByAdmin(data: any) {
     return await this.propertiesService.addNewPropertyByAdmin(data);
   }
@@ -22,7 +22,7 @@ export class PropertiesController {
   //   return new ApiResponse(result);
   // }
 
-  @MessagePattern('update_properties')
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.update_properties)
   async updatePropertyByAdmin(data: any) {
     const result = await this.propertiesService.updatePropertyByAdmin(
       data.id,
@@ -44,7 +44,7 @@ export class PropertiesController {
   //   return new ApiResponse(result);
   // }
 
-  @MessagePattern('retrieve_properties')
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.retrieve_properties)
   async getAllPropertyLists() {
     const result = await this.propertiesService.getAllPropertyLists();
     return result;
@@ -57,7 +57,7 @@ export class PropertiesController {
   //   return new ApiResponse(result);
   // }
 
-  @MessagePattern('delete_properties')
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.delete_properties)
   async deletePropertyFromList(id: string) {
     const result = await this.propertiesService.deletePropertyFromList(id);
     return result;

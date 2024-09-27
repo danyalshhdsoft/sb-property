@@ -16,7 +16,7 @@ export class Cities extends Document {
   @Prop({ type: mongoose.Schema.Types.Mixed })
   metadata: any;
 
-  @Prop({ type: Coordinates, default: () => ({}), required: true })
+  @Prop({ type: Coordinates, default: () => ({}) })
   coordinates: Coordinates;
 }
 

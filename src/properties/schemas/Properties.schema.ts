@@ -39,13 +39,13 @@ const SubCategorySchema = new MongooseSchema({
   hasBed: { type: Boolean, default: false },
   hasFurnishingStatus: { type: Boolean, default: false },
   hasPropertyAge: { type: Boolean, default: false },
+
   hasRoomTypes: { type: Boolean, default: false },
-  order: { type: Number, default: 0 },
-  otherDetails: {
-    unitNo: { type: String, default: '' },
-    floorNo: { type: Number, default: 0 },
-    apartmentName: { type: String, default: '' },
-  },
+  // otherDetails: {
+  //   unitNo: { type: String, default: '' },
+  //   floorNo: { type: Number, default: 0 },
+  //   apartmentName: { type: String, default: '' },
+  // },
 });
 
 // Define SquareFeet schema
@@ -76,15 +76,15 @@ export class Properties extends Document {
   category: string;
 
   @Prop({ type: SubCategorySchema, default: () => ({}) })
-  subCategory: typeof SubCategorySchema;
+  subCategory: typeof SubCategorySchema; //discussion needed
 
-  @Prop({ type: BuildingsSchema })
-  buildingData: Buildings;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Buildings.name })
+  building: mongoose.Schema.Types.ObjectId; //keep building
 
   @Prop({
     type: String,
     enum: PROPERTY_PURPOSE,
-    default: PROPERTY_PURPOSE.RENT,
+    default: PROPERTY_PURPOSE.SALE,
   })
   purpose: PROPERTY_PURPOSE;
   @Prop({
@@ -95,7 +95,7 @@ export class Properties extends Document {
   completionStatus: PROPERTY_COMPLETION_STATUS;
   @Prop({
     type: String,
-    default: '',
+    required: true,
   })
   propertyListingTitle: string;
   @Prop({
@@ -105,7 +105,7 @@ export class Properties extends Document {
   description: string;
   @Prop({
     type: String,
-    default: '',
+    required: true,
   })
   referenceNo: string;
   @Prop({
@@ -128,21 +128,11 @@ export class Properties extends Document {
   @Prop({
     type: [CitiesSchema],
   })
-  city: Cities[]; //Should be an Id or subdocument
+  city: Cities; //Should be an Id
   @Prop({
     type: [LocalsSchema],
   })
   local: Locals[]; //Should be an Id or subdocument
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  autoRenewal: boolean;
-  @Prop({
-    type: Date,
-    default: null,
-  })
-  renewalDate: Date;
   @Prop({
     type: String,
     enum: PROPERTY_LISTING_STATUS,
@@ -173,23 +163,19 @@ export class Properties extends Document {
     type: Boolean,
     default: false,
   })
-  balcony: boolean;
+  hasBalcony: boolean;
   @Prop({
     type: String,
     enum: PROPERTY_OWNERSHIP_STATUS,
     default: PROPERTY_OWNERSHIP_STATUS.FREE_HOLD,
   })
   ownershipStatus: PROPERTY_OWNERSHIP_STATUS;
-  @Prop({
-    type: Date,
-    default: Date.now(),
-  })
-  expiryDate: Date;
+
   @Prop({
     type: Number,
     default: 0,
   })
-  propertyListingPrice: number;
+  price: number; //property price
   @Prop({
     type: String,
     default: 'AED',
@@ -203,25 +189,25 @@ export class Properties extends Document {
     ref: Developers.name,
     default: null,
   })
-  developerId: mongoose.Schema.Types.ObjectId;
+  developer: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Projects.name,
     default: null,
   })
-  projectId: mongoose.Schema.Types.ObjectId;
+  project: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: Date,
     default: null,
   })
   handoverDate: Date;
   @Prop({
-    type: String,
+    type: [String],
     enum: PAYMENT_OPTIONS,
     default: PAYMENT_OPTIONS.INSTALLMENT_SETTLEMENT,
   })
-  paymentOptions: PAYMENT_OPTIONS;
-
+  paymentOptions: PAYMENT_OPTIONS[];
+  //TBD
   @Prop({
     type: {
       stages: [
@@ -244,7 +230,7 @@ export class Properties extends Document {
     }[];
     usePredefined: boolean;
   };
-
+  //TBD
   @Prop({
     type: {
       timelines: [
@@ -274,17 +260,7 @@ export class Properties extends Document {
     type: Date,
     default: null,
   })
-  listedTimeStamp: Date;
-  @Prop({
-    type: Date,
-    default: null,
-  })
-  createdAt: Date;
-  @Prop({
-    type: Date,
-    default: null,
-  })
-  updatedAt: Date;
+  publishedAt: Date;
 
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Admin.name })
   // deletedBy: Admin;
@@ -306,7 +282,7 @@ export class Properties extends Document {
 
   //to fetch rental data
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Rentals.name })
-  rentalId: mongoose.Schema.Types.ObjectId;
+  rental: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: String,
