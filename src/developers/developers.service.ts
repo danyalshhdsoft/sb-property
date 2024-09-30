@@ -17,7 +17,11 @@ export class DevelopersService {
       const aDevelopers = await this.DevelopersModel.find({
         deletedAt: { $eq: null },
       });
-      return aDevelopers;
+      return {
+        status: 200,
+        data: aDevelopers,
+        message: 'Developers retrieved successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -36,7 +40,11 @@ export class DevelopersService {
       const newDeveloper =
         await this.DevelopersModel.create(oDeveloperRequests);
 
-      return newDeveloper;
+      return {
+        status: 200,
+        data: newDeveloper,
+        message: 'Developer added to the list successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -73,7 +81,11 @@ export class DevelopersService {
       if (!oUpdateDeveloper) {
         throw new NotFoundException(`Developer with ID ${id} not found`);
       }
-      return oUpdateDeveloper;
+      return {
+        status: 200,
+        data: oUpdateDeveloper,
+        message: 'Developer details updated successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -98,7 +110,11 @@ export class DevelopersService {
         { new: true },
       );
 
-      return { message: 'Developer Deleted Successfully' };
+      return {
+        status: 200,
+        data: [],
+        message: 'Developer Deleted Successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }

@@ -160,7 +160,7 @@ export class ProjectsService {
       return {
         status: 200,
         data: oUpdateProject,
-        message: 'Project updated successfully',
+        message: 'Project details updated successfully',
       };
     } catch (oError) {
       throw new Error(oError);

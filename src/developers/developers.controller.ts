@@ -1,71 +1,50 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { DevelopersService } from './developers.service';
-import ApiResponse from '../utils/api-response.util';
-import { CreateDeveloperDTO } from './dto/create-developer.dto';
-import { UpdateDeveloperDTO } from './dto/update-developer.dto';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { AuthFlag } from '../common/decorators/auth-flag.decorator';
-
+import { MessagePattern } from '@nestjs/microservices';
+import { KAFKA_DEVELOPERS_TOPIC } from '../utils/constants/kafka-const';
 @Controller('developers')
-@UseGuards(AuthGuard)
 export class DevelopersController {
   constructor(private readonly DevelopersService: DevelopersService) {}
 
-  @Get()
-  @AuthFlag('privateRoute')
+  @MessagePattern(KAFKA_DEVELOPERS_TOPIC.retrieve_developers)
   async getAllDevelopers() {
     try {
       const response = await this.DevelopersService.getAllDevelopers();
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Post('add-developer')
-  @AuthFlag('privateRoute')
-  async addNewDeveloperByAdmin(@Body() developerRequests: CreateDeveloperDTO) {
+  @MessagePattern(KAFKA_DEVELOPERS_TOPIC.add_developer)
+  async addNewDeveloperByAdmin(developerRequests: any) {
     try {
       const response =
         await this.DevelopersService.addNewDeveloperByAdmin(developerRequests);
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Put(':id')
-  @AuthFlag('privateRoute')
-  async updateDeveloperByAdmin(
-    @Param('id') id: string,
-    @Body() developerRequests: UpdateDeveloperDTO,
-  ) {
+  @MessagePattern(KAFKA_DEVELOPERS_TOPIC.update_developer)
+  async updateDeveloperByAdmin(developerRequests: any) {
     try {
       const response = await this.DevelopersService.updateDeveloperByAdmin(
-        id,
-        developerRequests,
+        developerRequests.id,
+        developerRequests.data,
       );
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Delete(':id')
-  @AuthFlag('privateRoute')
-  async deleteDeveloperFromList(@Param('id') id: string) {
+  @MessagePattern(KAFKA_DEVELOPERS_TOPIC.delete_developer)
+  async deleteDeveloperFromList(id: any) {
     try {
       const response = await this.DevelopersService.deleteDeveloperFromList(id);
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }

@@ -164,7 +164,7 @@ export class PropertiesService {
       return {
         status: 200,
         data: oUpdateProperty,
-        message: 'Property updated successfully',
+        message: 'Property details updated successfully',
       };
     } catch (oError) {
       throw new Error(oError);
