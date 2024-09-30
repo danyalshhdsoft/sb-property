@@ -195,7 +195,7 @@ export class PropertiesService {
       });
 
       if (!oExistingProperty) {
-        throw new NotFoundException(
+        throw new Error(
           `Record with ID "${id}" not found or is already deleted`,
         );
       }
@@ -211,7 +211,7 @@ export class PropertiesService {
         message: 'Property deleted successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw oError;
     }
   }
 

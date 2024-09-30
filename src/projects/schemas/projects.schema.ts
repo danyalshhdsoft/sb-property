@@ -9,10 +9,7 @@ import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import { Documents } from '@/src/common/schemas/documents.schema';
 import { Developers } from '@/src/developers/schemas/developers.schema';
 import { Amenities } from '@/src/common/interfaces/amenities.interface';
-import {
-  Buildings,
-  BuildingsSchema,
-} from '@/src/common/schemas/buildings.schema';
+import { Buildings } from '@/src/common/schemas/buildings.schema';
 
 @Schema({ timestamps: true })
 export class Projects extends Document {
@@ -156,14 +153,17 @@ export class Projects extends Document {
   })
   documents: mongoose.Schema.Types.ObjectId[];
   @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Properties' }],
+    default: [],
+  })
+  propertyId: mongoose.Schema.Types.ObjectId[]; //AgentId
+
+  @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Properties',
+    ref: Buildings.name,
     default: null,
   })
-  propertyId: mongoose.Schema.Types.ObjectId; //AgentId
-
-  @Prop({ type: BuildingsSchema })
-  buildingData: Buildings;
+  building: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: Date,

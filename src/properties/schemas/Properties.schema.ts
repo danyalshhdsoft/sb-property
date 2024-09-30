@@ -27,10 +27,7 @@ import { Locations } from '@/src/locations/schemas/location.schema';
 import { Amenities } from '@/src/common/interfaces/amenities.interface';
 import { Rentals } from './rentals.schema';
 import { FloorPlans } from './floor-plans.schema';
-import {
-  Buildings,
-  BuildingsSchema,
-} from '@/src/common/schemas/buildings.schema';
+import { Buildings } from '@/src/common/schemas/buildings.schema';
 import { Cities, CitiesSchema } from '@/src/locations/schemas/city.schema';
 import { Locals, LocalsSchema } from '@/src/locations/schemas/locals.schema';
 

@@ -6,6 +6,7 @@ import {
   KAFKA_CONSUMER_GROUP_ID,
   KAFKA_OPTIONS_CLIENT_ID,
 } from './utils/constants/kafka-const';
+import { AllRpcExceptionsFilter } from './common/exception-filter/global-exception.filters';
 //do not remove this validation pipe code.Check when you can.Fix It. Use It.
 //Also check the @IsUniqueSlug used where AmenitiesDTO is called.
 //And if everything is fine then remove this and above line comments
@@ -13,6 +14,7 @@ import {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new AllRpcExceptionsFilter());
   const configService = app.get(ConfigService);
   // Enable global validation pipe
   // app.useGlobalPipes(

@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
 @Controller('properties')
 // @UseGuards(AuthGuard)
@@ -57,8 +57,14 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.delete_properties)
   async deletePropertyFromList(id: string) {
-    const result = await this.propertiesService.deletePropertyFromList(id);
-    return result;
+    try {
+      const result = await this.propertiesService.deletePropertyFromList(id);
+      return result;
+    } catch (oError) {
+      throw new RpcException(
+        oError.message || 'An error occurred while deleting the property',
+      );
+    }
   }
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.update_property_status)
