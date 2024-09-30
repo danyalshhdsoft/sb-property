@@ -62,7 +62,11 @@ export class PropertiesService {
       //check for building embedded document field in schema to save
       const newProperty = await this.PropertiesModel.create(oPropertyRequests);
 
-      return newProperty;
+      return {
+        status: 200,
+        data: newProperty,
+        message: 'Property added to the list successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -157,7 +161,11 @@ export class PropertiesService {
       if (!oUpdateProperty) {
         throw new NotFoundException(`Property with ID ${id} not found`);
       }
-      return oUpdateProperty;
+      return {
+        status: 200,
+        data: oUpdateProperty,
+        message: 'Property updated successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -169,7 +177,11 @@ export class PropertiesService {
         reviewStatus: PROPERTY_REVIEW_STATUS.APPROVED,
         deletedAt: { $eq: null },
       }).exec();
-      return aPropertyLists;
+      return {
+        status: 200,
+        data: aPropertyLists,
+        message: 'Property retrieved successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -193,8 +205,37 @@ export class PropertiesService {
         { deletedAt: new Date() },
         { new: true },
       );
+      return {
+        status: 200,
+        data: [],
+        message: 'Property deleted successfully',
+      };
+    } catch (oError) {
+      throw new Error(oError);
+    }
+  }
 
-      return { message: 'Property Deleted Successfully' };
+  async PropertyStatusUpdate(
+    id: string,
+    oPropertyRequests: Partial<UpdatePropertyDto>,
+  ) {
+    try {
+      const oUpdateProperty = await this.PropertiesModel.findOneAndUpdate(
+        { _id: id },
+        { $set: oPropertyRequests },
+        { new: true },
+      );
+      if (!oUpdateProperty) {
+        throw new NotFoundException(`Property with ID ${id} not found`);
+      }
+      return {
+        status: 200,
+        data: oUpdateProperty,
+        message:
+          'Property is now on ' +
+          oUpdateProperty?.reviewStatus?.toLowerCase() +
+          ' status',
+      };
     } catch (oError) {
       throw new Error(oError);
     }

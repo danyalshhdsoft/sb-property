@@ -24,11 +24,10 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.update_properties)
   async updatePropertyByAdmin(data: any) {
-    const result = await this.propertiesService.updatePropertyByAdmin(
+    return await this.propertiesService.updatePropertyByAdmin(
       data.id,
       data.data,
     );
-    return result;
   }
 
   // @Put(':id')
@@ -46,8 +45,7 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.retrieve_properties)
   async getAllPropertyLists() {
-    const result = await this.propertiesService.getAllPropertyLists();
-    return result;
+    return await this.propertiesService.getAllPropertyLists();
   }
 
   // @Get()
@@ -61,6 +59,14 @@ export class PropertiesController {
   async deletePropertyFromList(id: string) {
     const result = await this.propertiesService.deletePropertyFromList(id);
     return result;
+  }
+
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.update_property_status)
+  async PropertyStatusUpdate(data: any) {
+    return await this.propertiesService.PropertyStatusUpdate(
+      data.id,
+      data.data,
+    );
   }
 
   // @Delete(':id')
