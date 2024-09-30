@@ -1,71 +1,86 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
-import ApiResponse from '../utils/api-response.util';
-import { CreateProjectDTO } from './dto/create-projects.dto';
-import { UpdateProjectDTO } from './dto/update-projects.dto';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { AuthFlag } from '../common/decorators/auth-flag.decorator';
-
+import { MessagePattern } from '@nestjs/microservices';
+import { KAFKA_PROJECTS_TOPIC } from '../utils/constants/kafka-const';
 @Controller('projects')
-@UseGuards(AuthGuard)
 export class ProjectsController {
   constructor(private readonly ProjectsService: ProjectsService) {}
 
-  @Post('add-project')
-  @AuthFlag('privateRoute')
-  async addNewProjectByAdmin(@Body() projectRequests: CreateProjectDTO) {
+  @MessagePattern(KAFKA_PROJECTS_TOPIC.add_project)
+  async addNewProjectByAdmin(projectRequests: any) {
     try {
       const response =
         await this.ProjectsService.addNewProjectByAdmin(projectRequests);
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Put(':id')
-  @AuthFlag('privateRoute')
-  async updateProjectByAdmin(
-    @Param('id') id: string,
-    @Body() projectRequests: UpdateProjectDTO,
-  ) {
+  // @Post('add-project')
+  // async addNewProjectByAdmin(@Body() projectRequests: CreateProjectDTO) {
+  //   try {
+  //     const response =
+  //       await this.ProjectsService.addNewProjectByAdmin(projectRequests);
+  //     return new ApiResponse(response);
+  //   } catch (oError) {
+  //     throw new Error(oError);
+  //   }
+  // }
+
+  @MessagePattern(KAFKA_PROJECTS_TOPIC.update_project)
+  async updateProjectByAdmin(projectRequests: any) {
     try {
       const response = await this.ProjectsService.updateProjectByAdmin(
-        id,
-        projectRequests,
+        projectRequests.id,
+        projectRequests.data,
       );
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Delete(':id')
-  @AuthFlag('privateRoute')
-  async deleteProjectFromList(@Param('id') id: string) {
+  // @Put(':id')
+  // async updateProjectByAdmin(
+  //   @Param('id') id: string,
+  //   @Body() projectRequests: UpdateProjectDTO,
+  // ) {
+  //   try {
+  //     const response = await this.ProjectsService.updateProjectByAdmin(
+  //       id,
+  //       projectRequests,
+  //     );
+  //     return new ApiResponse(response);
+  //   } catch (oError) {
+  //     throw new Error(oError);
+  //   }
+  // }
+
+  @MessagePattern(KAFKA_PROJECTS_TOPIC.delete_project)
+  async deleteProjectFromList(id: string) {
     try {
       const response = await this.ProjectsService.deleteProjectFromList(id);
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  @Get()
-  @AuthFlag('privateRoute')
+  // @Delete(':id')
+  // async deleteProjectFromList(@Param('id') id: string) {
+  //   try {
+  //     const response = await this.ProjectsService.deleteProjectFromList(id);
+  //     return new ApiResponse(response);
+  //   } catch (oError) {
+  //     throw new Error(oError);
+  //   }
+  // }
+
+  @MessagePattern(KAFKA_PROJECTS_TOPIC.retrieve_projects)
   async getAllProjects() {
     try {
-      const response = await this.ProjectsService.getAllProjects();
-      return new ApiResponse(response);
+      return await this.ProjectsService.getAllProjects();
     } catch (oError) {
       throw new Error(oError);
     }

@@ -16,16 +16,6 @@ export class LocationsController {
     }
   }
 
-  // @Get()
-  // async getAllLocations() {
-  //   try {
-  //     const response = await this.LocationsService.getAllLocations();
-  //     return new ApiResponse(response);
-  //   } catch (oError) {
-  //     throw new Error(oError);
-  //   }
-  // }
-
   // Endpoint for autocomplete search box
   @MessagePattern(KAFKA_LOCATIONS_TOPIC.locations_autocomplete)
   async getAutocomplete(data: any) {

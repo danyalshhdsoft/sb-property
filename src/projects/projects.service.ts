@@ -62,7 +62,11 @@ export class ProjectsService {
         },
       ];
       const aProjects = await this.ProjectsModel.aggregate(pipeline);
-      return aProjects;
+      return {
+        status: 200,
+        data: aProjects,
+        message: 'Project retrieved successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -92,7 +96,11 @@ export class ProjectsService {
       //check for building embedded document field in schema to save
       const newProject = await this.ProjectsModel.create(oProjectRequests);
 
-      return newProject;
+      return {
+        status: 200,
+        data: newProject,
+        message: 'Project added to the list successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -148,7 +156,12 @@ export class ProjectsService {
       if (!oUpdateProject) {
         throw new NotFoundException(`Project with ID ${id} not found`);
       }
-      return oUpdateProject;
+
+      return {
+        status: 200,
+        data: oUpdateProject,
+        message: 'Project updated successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -173,7 +186,11 @@ export class ProjectsService {
         { new: true },
       );
 
-      return { message: 'Project Deleted Successfully' };
+      return {
+        status: 200,
+        data: [],
+        message: 'Project deleted successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
