@@ -36,7 +36,11 @@ export class LocationsService {
   async getAllLocations() {
     try {
       const aLocations = await this.LocationsModel.find({});
-      return aLocations;
+      return {
+        status: 200,
+        data: aLocations,
+        message: 'Retrieved all locations successfully',
+      };
     } catch (oError) {
       throw new Error(oError);
     }
@@ -74,7 +78,14 @@ export class LocationsService {
         ),
       );
 
-      return this.filterBySubcategories(response.predictions); // Returns suggestions for autocomplete
+      const filteredSubcategories = await this.filterBySubcategories(
+        response.predictions,
+      ); // Returns suggestions for autocomplete
+      return {
+        status: 200,
+        data: filteredSubcategories,
+        message: '',
+      };
     } catch (oError) {
       throw new HttpException(
         'Internal Server Error!Googly',
@@ -108,7 +119,14 @@ export class LocationsService {
         ),
       );
 
-      return this.filterBySubcategories(response.predictions);
+      const filteredSubcategories = await this.filterBySubcategories(
+        response.predictions,
+      );
+      return {
+        status: 200,
+        data: filteredSubcategories,
+        message: '',
+      };
     } catch (oError) {
       throw new HttpException(
         'Internal Server Error!Googly',
@@ -119,48 +137,64 @@ export class LocationsService {
 
   // Get place details by placeId
   async getPlaceDetails(placeId: string) {
-    const params = `json?place_id=${placeId}&key=${this.googleApiKey}&fields=formatted_address,name,geometry,adr_address,address_components,business_status,vicinity,plus_code`;
-    const url =
-      this.config.get<string>('GOOGLE_MAPS_PLACE_DETAILS_URL') + params;
+    try {
+      const params = `json?place_id=${placeId}&key=${this.googleApiKey}&fields=formatted_address,name,geometry,adr_address,address_components,business_status,vicinity,plus_code`;
+      const url =
+        this.config.get<string>('GOOGLE_MAPS_PLACE_DETAILS_URL') + params;
 
-    const response = await lastValueFrom(
-      this.httpService.get(url).pipe(map((res) => res.data)),
-    );
+      const response = await lastValueFrom(
+        this.httpService.get(url).pipe(map((res) => res.data)),
+      );
 
-    const { result } = response;
+      const { result } = response;
 
-    return result;
+      return {
+        status: 200,
+        data: result,
+        message: 'Place details retireved successfully',
+      };
 
-    // return {
-    //   name: result.name,
-    //   address: result.formatted_address,
-    //   location: result.geometry.location,
-    //   totalResult: result,
-    //   developer: null, // Placeholder, to be filled by external data (optional)
-    // };
+      // return {
+      //   name: result.name,
+      //   address: result.formatted_address,
+      //   location: result.geometry.location,
+      //   totalResult: result,
+      //   developer: null, // Placeholder, to be filled by external data (optional)
+      // };
+    } catch (oError) {
+      throw new Error(oError);
+    }
   }
 
   async getGeocodeResponse(place: string) {
-    const params = `json?address=${place}&key=${this.googleApiKey}`;
-    const urlGeocode =
-      this.config.get<string>('GOOGLE_MAPS_GEOCODE_URL') + params;
+    try {
+      const params = `json?address=${place}&key=${this.googleApiKey}`;
+      const urlGeocode =
+        this.config.get<string>('GOOGLE_MAPS_GEOCODE_URL') + params;
 
-    const geocodeResponse = await lastValueFrom(
-      this.httpService.get(urlGeocode).pipe(
-        map((res) => res.data),
-        catchError((error: AxiosError) => {
-          throw {
-            status: 500,
-            message: 'Could not retrieve geocode data',
-            error: error,
-          };
-        }),
-      ),
-    );
+      const geocodeResponse = await lastValueFrom(
+        this.httpService.get(urlGeocode).pipe(
+          map((res) => res.data),
+          catchError((error: AxiosError) => {
+            throw {
+              status: 500,
+              message: 'Could not retrieve geocode data',
+              error: error,
+            };
+          }),
+        ),
+      );
 
-    // Get the coordinates from the response
-    const cityCoordinates = geocodeResponse.results[0].geometry.location;
-    return `City Coordinates: ${cityCoordinates.lat}, ${cityCoordinates.lng}`;
+      // Get the coordinates from the response
+      const cityCoordinates = geocodeResponse.results[0].geometry.location;
+      return {
+        status: 200,
+        data: `${place} Coordinates: ${cityCoordinates.lat}, ${cityCoordinates.lng}`,
+        message: 'These are your Coordinates',
+      };
+    } catch (oError) {
+      throw new Error(oError);
+    }
   }
 
   async normalizeGoogleResponse(response, module) {

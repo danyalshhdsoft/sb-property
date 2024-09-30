@@ -1,51 +1,51 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { LocationsService } from './location.service';
-import ApiResponse from '../utils/api-response.util';
-import { AuthFlag } from '../common/decorators/auth-flag.decorator';
-import { AuthGuard } from '../common/guards/auth.guard';
-
+import { KAFKA_LOCATIONS_TOPIC } from '../utils/constants/kafka-const';
+import { MessagePattern } from '@nestjs/microservices';
 @Controller('locations')
-@UseGuards(AuthGuard)
 export class LocationsController {
   constructor(private readonly LocationsService: LocationsService) {}
 
-  @Get()
+  @MessagePattern(KAFKA_LOCATIONS_TOPIC.retrieve_locations)
   async getAllLocations() {
     try {
       const response = await this.LocationsService.getAllLocations();
-      return new ApiResponse(response);
+      return response;
     } catch (oError) {
       throw new Error(oError);
     }
   }
 
-  // Endpoint for autocomplete search box
-  @Get('autocomplete')
-  @AuthFlag('privateRoute')
-  async getAutocomplete(@Query('input') input: string) {
-    return this.LocationsService.getAutocomplete(input);
-  }
+  // @Get()
+  // async getAllLocations() {
+  //   try {
+  //     const response = await this.LocationsService.getAllLocations();
+  //     return new ApiResponse(response);
+  //   } catch (oError) {
+  //     throw new Error(oError);
+  //   }
+  // }
 
   // Endpoint for autocomplete search box
-  @Get('restricted-location-auto-complete')
-  @AuthFlag('privateRoute')
-  async getLocationRestrictedAutoComplete(
-    @Query('input') input: string,
-    @Query('latitude') latitude: number,
-    @Query('longitude') longitude: number,
-  ) {
-    return this.LocationsService.getLocationRestrictedAutoComplete(
-      input,
-      latitude,
-      longitude,
+  @MessagePattern(KAFKA_LOCATIONS_TOPIC.locations_autocomplete)
+  async getAutocomplete(data: any) {
+    return await this.LocationsService.getAutocomplete(data);
+  }
+
+  // Endpoint for restricted autocomplete search box
+  @MessagePattern(KAFKA_LOCATIONS_TOPIC.restricted_location_auto_complete)
+  async getLocationRestrictedAutoComplete(data: any) {
+    return await this.LocationsService.getLocationRestrictedAutoComplete(
+      data.input,
+      data.latitude,
+      data.longitude,
     );
   }
 
   // Endpoint for fetching place details
-  @Get('details')
-  @AuthFlag('privateRoute')
-  async getPlaceDetails(@Query('placeId') placeId: string) {
-    const placeDetails = await this.LocationsService.getPlaceDetails(placeId);
+  @MessagePattern(KAFKA_LOCATIONS_TOPIC.locations_details)
+  async getPlaceDetails(data: any) {
+    const placeDetails = await this.LocationsService.getPlaceDetails(data);
 
     // Optional: Enrich with developer/project details from external data
     // const additionalDetails = await this.LocationsService.getDeveloperDetails(
@@ -59,9 +59,8 @@ export class LocationsController {
   }
 
   // Endpoint for autocomplete search box
-  @Get('geocode')
-  @AuthFlag('privateRoute')
-  async getGeocode(@Query('input') input: string) {
-    return this.LocationsService.getGeocodeResponse(input);
+  @MessagePattern(KAFKA_LOCATIONS_TOPIC.locations_geocode)
+  async getGeocode(data: any) {
+    return this.LocationsService.getGeocodeResponse(data);
   }
 }
