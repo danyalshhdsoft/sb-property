@@ -8,12 +8,8 @@ export class LocationsController {
 
   @MessagePattern(KAFKA_LOCATIONS_TOPIC.retrieve_locations)
   async getAllLocations() {
-    try {
-      const response = await this.LocationsService.getAllLocations();
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.LocationsService.getAllLocations();
+    return response;
   }
 
   // Endpoint for autocomplete search box

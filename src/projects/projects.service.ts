@@ -6,6 +6,7 @@ import { PROJECT_STATUS } from './enums/projects.enum';
 import { CreateProjectDTO } from './dto/create-projects.dto';
 import { UpdateProjectDTO } from './dto/update-projects.dto';
 import { LocationsService } from '../locations/location.service';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProjectsService {
@@ -68,7 +69,7 @@ export class ProjectsService {
         message: 'Project retrieved successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -102,7 +103,7 @@ export class ProjectsService {
         message: 'Project added to the list successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -163,7 +164,7 @@ export class ProjectsService {
         message: 'Project details updated successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -192,7 +193,7 @@ export class ProjectsService {
         message: 'Project deleted successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 }

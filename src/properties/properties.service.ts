@@ -11,6 +11,7 @@ import {
   PROPERTY_REVIEW_STATUS,
 } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class PropertiesService {
@@ -68,7 +69,7 @@ export class PropertiesService {
         message: 'Property added to the list successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -167,7 +168,7 @@ export class PropertiesService {
         message: 'Property details updated successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -183,7 +184,7 @@ export class PropertiesService {
         message: 'Property retrieved successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -195,7 +196,7 @@ export class PropertiesService {
       });
 
       if (!oExistingProperty) {
-        throw new Error(
+        throw new NotFoundException(
           `Record with ID "${id}" not found or is already deleted`,
         );
       }
@@ -211,7 +212,7 @@ export class PropertiesService {
         message: 'Property deleted successfully',
       };
     } catch (oError) {
-      throw oError;
+      throw new RpcException(oError);
     }
   }
 
@@ -237,7 +238,7 @@ export class PropertiesService {
           ' status',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 }

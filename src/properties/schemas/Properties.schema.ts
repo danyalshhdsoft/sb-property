@@ -227,6 +227,14 @@ export class Properties extends Document {
     }[];
     usePredefined: boolean;
   };
+
+  // paymentPlans: [{
+  //   title:"",
+  //   percentae: "",
+  //   caption:"",
+  //   serial:1
+  // }]
+
   //TBD
   @Prop({
     type: {
@@ -253,6 +261,14 @@ export class Properties extends Document {
     }[];
     usePredefined: boolean;
   };
+
+  // timelines: [{
+  //   title:"",
+  //   subtitle: "",
+  //   serial:1,
+  //  date: new Date(),
+  // }]
+
   @Prop({
     type: Date,
     default: null,
@@ -375,7 +391,7 @@ export class Properties extends Document {
     enum: PROPERTY_TENANCY_WAY_OF_PAYMENT,
     default: PROPERTY_TENANCY_WAY_OF_PAYMENT.BANK_TRANSFER,
   })
-  tenancyWayOfPayments: PROPERTY_TENANCY_WAY_OF_PAYMENT;
+  tenancyWayOfPayments: PROPERTY_TENANCY_WAY_OF_PAYMENT[];
   //may need a field to save history of this property purchases(between admin and agents)
 }
 

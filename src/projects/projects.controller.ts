@@ -8,13 +8,9 @@ export class ProjectsController {
 
   @MessagePattern(KAFKA_PROJECTS_TOPIC.add_project)
   async addNewProjectByAdmin(projectRequests: any) {
-    try {
-      const response =
-        await this.ProjectsService.addNewProjectByAdmin(projectRequests);
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response =
+      await this.ProjectsService.addNewProjectByAdmin(projectRequests);
+    return response;
   }
 
   // @Post('add-project')
@@ -30,15 +26,11 @@ export class ProjectsController {
 
   @MessagePattern(KAFKA_PROJECTS_TOPIC.update_project)
   async updateProjectByAdmin(projectRequests: any) {
-    try {
-      const response = await this.ProjectsService.updateProjectByAdmin(
-        projectRequests.id,
-        projectRequests.data,
-      );
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.ProjectsService.updateProjectByAdmin(
+      projectRequests.id,
+      projectRequests.data,
+    );
+    return response;
   }
 
   // @Put(':id')
@@ -59,12 +51,8 @@ export class ProjectsController {
 
   @MessagePattern(KAFKA_PROJECTS_TOPIC.delete_project)
   async deleteProjectFromList(id: string) {
-    try {
-      const response = await this.ProjectsService.deleteProjectFromList(id);
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.ProjectsService.deleteProjectFromList(id);
+    return response;
   }
 
   // @Delete(':id')
@@ -79,10 +67,6 @@ export class ProjectsController {
 
   @MessagePattern(KAFKA_PROJECTS_TOPIC.retrieve_projects)
   async getAllProjects() {
-    try {
-      return await this.ProjectsService.getAllProjects();
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    return await this.ProjectsService.getAllProjects();
   }
 }

@@ -1,4 +1,10 @@
-import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  Inject,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Locations } from './schemas/location.schema';
 import { Model } from 'mongoose';
@@ -17,6 +23,7 @@ import {
   residentialPlaceTypes,
 } from '../common/util/common.util';
 import { ConfigService } from '@nestjs/config';
+import { RpcException } from '@nestjs/microservices';
 @Injectable()
 export class LocationsService {
   private googleApiKey = this.config.get<string>('GOOGLE_API_KEY');
@@ -42,7 +49,7 @@ export class LocationsService {
         message: 'Retrieved all locations successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
   async filterBySubcategories(predictions: any[]) {
@@ -78,6 +85,14 @@ export class LocationsService {
         ),
       );
 
+      if (response) {
+        if (response.status !== 'OK' && response.error_message) {
+          throw response.error_message;
+        }
+      } else {
+        throw new BadRequestException('Google Map Response crashed');
+      }
+
       const filteredSubcategories = await this.filterBySubcategories(
         response.predictions,
       ); // Returns suggestions for autocomplete
@@ -87,10 +102,7 @@ export class LocationsService {
         message: '',
       };
     } catch (oError) {
-      throw new HttpException(
-        'Internal Server Error!Googly',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new RpcException(oError);
     }
   }
 
@@ -119,6 +131,14 @@ export class LocationsService {
         ),
       );
 
+      if (response) {
+        if (response.status !== 'OK' && response.status !== 'ZERO_RESULTS') {
+          throw response.error_message;
+        }
+      } else {
+        throw new BadRequestException('Google Map Response crashed');
+      }
+
       const filteredSubcategories = await this.filterBySubcategories(
         response.predictions,
       );
@@ -128,10 +148,7 @@ export class LocationsService {
         message: '',
       };
     } catch (oError) {
-      throw new HttpException(
-        'Internal Server Error!Googly',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new RpcException(oError);
     }
   }
 
@@ -143,8 +160,25 @@ export class LocationsService {
         this.config.get<string>('GOOGLE_MAPS_PLACE_DETAILS_URL') + params;
 
       const response = await lastValueFrom(
-        this.httpService.get(url).pipe(map((res) => res.data)),
+        this.httpService.get(url).pipe(
+          map((res) => res.data),
+          catchError((error: AxiosError) => {
+            throw {
+              status: 500,
+              message: 'Could not retireve place data',
+              error: error,
+            };
+          }),
+        ),
       );
+
+      if (response) {
+        if (response.error_message) {
+          throw response.error_message;
+        }
+      } else {
+        throw new BadRequestException('Google Map Response crashed');
+      }
 
       const { result } = response;
 
@@ -162,7 +196,7 @@ export class LocationsService {
       //   developer: null, // Placeholder, to be filled by external data (optional)
       // };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -185,6 +219,17 @@ export class LocationsService {
         ),
       );
 
+      if (geocodeResponse) {
+        if (
+          geocodeResponse.status !== 'OK' &&
+          geocodeResponse.status !== 'ZERO_RESULTS'
+        ) {
+          throw geocodeResponse.error_message;
+        }
+      } else {
+        throw new BadRequestException('Google Map Response crashed');
+      }
+
       // Get the coordinates from the response
       const cityCoordinates = geocodeResponse.results[0].geometry.location;
       return {
@@ -193,7 +238,7 @@ export class LocationsService {
         message: 'These are your Coordinates',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
