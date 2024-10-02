@@ -82,7 +82,15 @@ export class ProjectsService {
           ? oProjectRequests.projectTitle.toLowerCase().replace(/\s+/g, '-')
           : '';
       projectRequests['slug'] = slug;
-
+      if (
+        (oProjectRequests && oProjectRequests.placeId === '') ||
+        (oProjectRequests.locationMetaData &&
+          Object.keys(oProjectRequests.locationMetaData).length === 0)
+      ) {
+        throw new RpcException(
+          'Something went wrong while adding location. Check your locationMetaData and placeId',
+        );
+      }
       const oAddLocationData = await this.LocationService.addNewLocation(
         projectRequests?.locationMetaData,
         'google',
@@ -127,7 +135,9 @@ export class ProjectsService {
           : '';
 
       projectRequests['slug'] =
-        oExistingProject.slug && oExistingProject.slug !== ''
+        oExistingProject.slug &&
+        oExistingProject.slug !== '' &&
+        oExistingProject.slug === slug
           ? oExistingProject.slug
           : slug;
 
@@ -136,6 +146,8 @@ export class ProjectsService {
         projectRequests &&
         oExistingProject.placeId &&
         projectRequests.placeId &&
+        projectRequests.placeId !== '' &&
+        Object.keys(projectRequests.locationMetaData).length > 0 &&
         oExistingProject.placeId !== projectRequests.placeId
       ) {
         const oAddLocationData = await this.LocationService.addNewLocation(

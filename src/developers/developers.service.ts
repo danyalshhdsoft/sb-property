@@ -71,7 +71,9 @@ export class DevelopersService {
           : '';
 
       developerRequests['slug'] =
-        oExistingDeveloper.slug && oExistingDeveloper.slug !== ''
+        oExistingDeveloper.slug &&
+        oExistingDeveloper.slug !== '' &&
+        oExistingDeveloper.slug === slug
           ? oExistingDeveloper.slug
           : slug;
       const oUpdateDeveloper = await this.DevelopersModel.findByIdAndUpdate(

@@ -47,6 +47,16 @@ export class PropertiesService {
           : '';
       propertyRequests['slug'] = slug;
       propertyRequests['analyticsCounts'] = oAnalyticsCounts;
+
+      if (
+        (oPropertyRequests && oPropertyRequests.placeId === '') ||
+        (oPropertyRequests.locationMetaData &&
+          Object.keys(oPropertyRequests.locationMetaData).length === 0)
+      ) {
+        throw new RpcException(
+          'Something went wrong while adding location. Check your locationMetaData and placeId',
+        );
+      }
       //save location data in locationschema
       const oAddLocationData = await this.LocationService.addNewLocation(
         oPropertyRequests?.locationMetaData,
@@ -130,7 +140,9 @@ export class PropertiesService {
           : '';
 
       propertyRequests['slug'] =
-        oExistingProperty.slug && oExistingProperty.slug !== ''
+        oExistingProperty.slug &&
+        oExistingProperty.slug !== '' &&
+        oExistingProperty.slug === slug
           ? oExistingProperty.slug
           : slug;
 
@@ -139,6 +151,8 @@ export class PropertiesService {
         propertyRequests &&
         oExistingProperty.placeId &&
         propertyRequests.placeId &&
+        propertyRequests.placeId !== '' &&
+        Object.keys(propertyRequests.locationMetaData).length > 0 &&
         oExistingProperty.placeId !== propertyRequests.placeId
       ) {
         const oAddLocationData = await this.LocationService.addNewLocation(
