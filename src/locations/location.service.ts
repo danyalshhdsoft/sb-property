@@ -76,21 +76,34 @@ export class LocationsService {
         this.httpService.get(url).pipe(
           map((res) => res.data),
           catchError((error: AxiosError) => {
-            throw {
-              status: 500,
-              message: 'Could not retireve place data',
-              error: error,
-            };
+            const message: any =
+              error &&
+              error.response &&
+              error.response.data &&
+              (error.response.data as { error_message?: string }).error_message
+                ? (error.response.data as { error_message: string })
+                    .error_message
+                : 'AxiosError' +
+                  ' : Could not complete your search, check your input parameter';
+            throw new BadRequestException('AxiosError' + ' : ' + message);
           }),
         ),
       );
 
-      if (response) {
-        if (response.status !== 'OK' && response.error_message) {
-          throw response.error_message;
+      if (
+        response.status &&
+        response.status !== 'OK' &&
+        response.status !== 'ZERO_RESULTS'
+      ) {
+        if (response.error_message) {
+          throw new BadRequestException(
+            response.status + ' : ' + response.error_message,
+          );
+        } else {
+          throw new BadRequestException(
+            response.status + ' : Could not complete your search',
+          );
         }
-      } else {
-        throw new BadRequestException('Google Map Response crashed');
       }
 
       const filteredSubcategories = await this.filterBySubcategories(
@@ -102,7 +115,13 @@ export class LocationsService {
         message: '',
       };
     } catch (oError) {
-      throw new RpcException(oError);
+      if (oError) {
+        throw new RpcException(oError);
+      } else {
+        throw new RpcException(
+          'Something went wrong! Check your parameters and try again',
+        );
+      }
     }
   }
 
@@ -122,21 +141,35 @@ export class LocationsService {
         this.httpService.get(url).pipe(
           map((res) => res.data),
           catchError((error: AxiosError) => {
-            throw {
-              status: 500,
-              message: 'Could not retireve place data',
-              error: error,
-            };
+            const message: any =
+              error &&
+              error.response &&
+              error.response.data &&
+              (error.response.data as { error_message?: string }).error_message
+                ? (error.response.data as { error_message: string })
+                    .error_message
+                : 'AxiosError' +
+                  ' : Could not complete your search, check your input parameter';
+            throw new BadRequestException('AxiosError' + ' : ' + message);
           }),
         ),
       );
 
-      if (response) {
-        if (response.status !== 'OK' && response.status !== 'ZERO_RESULTS') {
-          throw response.error_message;
+      if (
+        response.status &&
+        response.status !== 'OK' &&
+        response.status !== 'ZERO_RESULTS'
+      ) {
+        if (response.error_message) {
+          throw new BadRequestException(
+            response.status + ' : ' + response.error_message,
+          );
+        } else {
+          throw new BadRequestException(
+            response.status +
+              ' : Could not complete your search, check your input parameter',
+          );
         }
-      } else {
-        throw new BadRequestException('Google Map Response crashed');
       }
 
       const filteredSubcategories = await this.filterBySubcategories(
@@ -148,7 +181,13 @@ export class LocationsService {
         message: '',
       };
     } catch (oError) {
-      throw new RpcException(oError);
+      if (oError) {
+        throw new RpcException(oError);
+      } else {
+        throw new RpcException(
+          'Something went wrong! Check your parameters and try again',
+        );
+      }
     }
   }
 
@@ -163,21 +202,35 @@ export class LocationsService {
         this.httpService.get(url).pipe(
           map((res) => res.data),
           catchError((error: AxiosError) => {
-            throw {
-              status: 500,
-              message: 'Could not retireve place data',
-              error: error,
-            };
+            const message: any =
+              error &&
+              error.response &&
+              error.response.data &&
+              (error.response.data as { error_message?: string }).error_message
+                ? (error.response.data as { error_message: string })
+                    .error_message
+                : 'AxiosError' +
+                  ' : Could not retrieve place data, check your placeId';
+            throw new BadRequestException('AxiosError' + ' : ' + message);
           }),
         ),
       );
 
-      if (response) {
+      if (
+        response.status &&
+        response.status !== 'OK' &&
+        response.status !== 'ZERO_RESULTS'
+      ) {
         if (response.error_message) {
-          throw response.error_message;
+          throw new BadRequestException(
+            response.status + ' : ' + response.error_message,
+          );
+        } else {
+          throw new BadRequestException(
+            response.status +
+              ' : Could not retrieve place data, check your placeId',
+          );
         }
-      } else {
-        throw new BadRequestException('Google Map Response crashed');
       }
 
       const { result } = response;
@@ -196,7 +249,13 @@ export class LocationsService {
       //   developer: null, // Placeholder, to be filled by external data (optional)
       // };
     } catch (oError) {
-      throw new RpcException(oError);
+      if (oError) {
+        throw new RpcException(oError);
+      } else {
+        throw new RpcException(
+          'Something went wrong! Check your parameters and try again',
+        );
+      }
     }
   }
 
@@ -210,35 +269,57 @@ export class LocationsService {
         this.httpService.get(urlGeocode).pipe(
           map((res) => res.data),
           catchError((error: AxiosError) => {
-            throw {
-              status: 500,
-              message: 'Could not retrieve geocode data',
-              error: error,
-            };
+            const message: any =
+              error &&
+              error.response &&
+              error.response.data &&
+              (error.response.data as { error_message?: string }).error_message
+                ? (error.response.data as { error_message: string })
+                    .error_message
+                : 'AxiosError' +
+                  ' : Could not retrieve geocode data, check your input';
+            throw new BadRequestException('AxiosError' + ' : ' + message);
           }),
         ),
       );
 
-      if (geocodeResponse) {
-        if (
-          geocodeResponse.status !== 'OK' &&
-          geocodeResponse.status !== 'ZERO_RESULTS'
-        ) {
-          throw geocodeResponse.error_message;
+      if (
+        geocodeResponse.status &&
+        geocodeResponse.status !== 'OK' &&
+        geocodeResponse.status !== 'ZERO_RESULTS'
+      ) {
+        if (geocodeResponse.error_message) {
+          throw new BadRequestException(
+            geocodeResponse.status + ' : ' + geocodeResponse.error_message,
+          );
+        } else {
+          throw new BadRequestException(
+            geocodeResponse.status + ' : Could not retrieve geocode data',
+          );
         }
-      } else {
-        throw new BadRequestException('Google Map Response crashed');
       }
 
-      // Get the coordinates from the response
-      const cityCoordinates = geocodeResponse.results[0].geometry.location;
-      return {
-        status: 200,
-        data: `${place} Coordinates: ${cityCoordinates.lat}, ${cityCoordinates.lng}`,
-        message: 'These are your Coordinates',
-      };
+      if (geocodeResponse.status && geocodeResponse.status !== 'ZERO_RESULTS') {
+        // Get the coordinates from the response
+        const cityCoordinates = geocodeResponse.results[0].geometry.location;
+        return {
+          status: 200,
+          data: `${place} Coordinates: ${cityCoordinates.lat}, ${cityCoordinates.lng}`,
+          message: 'These are your Coordinates',
+        };
+      } else {
+        return {
+          status: 200,
+          data: '',
+          message: `${place} Coordinates: Not able to find ${place}. Check your spelling, if your input provided is correct`,
+        };
+      }
     } catch (oError) {
-      throw new RpcException(oError);
+      if (oError) {
+        throw new RpcException(oError);
+      } else {
+        throw new RpcException('Google Map Response crashed');
+      }
     }
   }
 

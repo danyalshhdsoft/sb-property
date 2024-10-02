@@ -4,6 +4,7 @@ import { Developers } from './schemas/developers.schema';
 import { Model } from 'mongoose';
 import { CreateDeveloperDTO } from './dto/create-developer.dto';
 import { UpdateDeveloperDTO } from './dto/update-developer.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class DevelopersService {
@@ -23,7 +24,7 @@ export class DevelopersService {
         message: 'Developers retrieved successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -46,7 +47,7 @@ export class DevelopersService {
         message: 'Developer added to the list successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -87,7 +88,7 @@ export class DevelopersService {
         message: 'Developer details updated successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 
@@ -116,7 +117,7 @@ export class DevelopersService {
         message: 'Developer Deleted Successfully',
       };
     } catch (oError) {
-      throw new Error(oError);
+      throw new RpcException(oError);
     }
   }
 }

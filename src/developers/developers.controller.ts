@@ -8,45 +8,29 @@ export class DevelopersController {
 
   @MessagePattern(KAFKA_DEVELOPERS_TOPIC.retrieve_developers)
   async getAllDevelopers() {
-    try {
-      const response = await this.DevelopersService.getAllDevelopers();
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.DevelopersService.getAllDevelopers();
+    return response;
   }
 
   @MessagePattern(KAFKA_DEVELOPERS_TOPIC.add_developer)
   async addNewDeveloperByAdmin(developerRequests: any) {
-    try {
-      const response =
-        await this.DevelopersService.addNewDeveloperByAdmin(developerRequests);
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response =
+      await this.DevelopersService.addNewDeveloperByAdmin(developerRequests);
+    return response;
   }
 
   @MessagePattern(KAFKA_DEVELOPERS_TOPIC.update_developer)
   async updateDeveloperByAdmin(developerRequests: any) {
-    try {
-      const response = await this.DevelopersService.updateDeveloperByAdmin(
-        developerRequests.id,
-        developerRequests.data,
-      );
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.DevelopersService.updateDeveloperByAdmin(
+      developerRequests.id,
+      developerRequests.data,
+    );
+    return response;
   }
 
   @MessagePattern(KAFKA_DEVELOPERS_TOPIC.delete_developer)
   async deleteDeveloperFromList(id: any) {
-    try {
-      const response = await this.DevelopersService.deleteDeveloperFromList(id);
-      return response;
-    } catch (oError) {
-      throw new Error(oError);
-    }
+    const response = await this.DevelopersService.deleteDeveloperFromList(id);
+    return response;
   }
 }
