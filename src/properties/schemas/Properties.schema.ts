@@ -139,6 +139,7 @@ export class Properties extends Document {
   building: mongoose.Schema.Types.ObjectId; //keep building
 
   @Prop({
+    type: Object,
     default: {},
   })
   squareFeet: SquareFeet;

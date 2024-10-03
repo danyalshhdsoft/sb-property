@@ -104,6 +104,7 @@ export class Rentals extends Document {
   })
   tenantEligibility: boolean;
   @Prop({
+    type: Object,
     default: {},
   })
   tenantEligibilityPreference: TenantEligibility;

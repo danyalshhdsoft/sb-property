@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { CATEGORY } from '@/src/common/enums/category.enum';
+import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class PropertyType extends Document {
