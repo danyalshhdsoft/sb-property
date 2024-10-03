@@ -102,6 +102,9 @@ export class FloorPlans extends Document {
     default: 0,
   })
   bedroomCount: number;
+
+  @Prop({ default: null, type: Date })
+  deletedAt: Date;
 }
 
 export const FloorPlansSchema = SchemaFactory.createForClass(FloorPlans);

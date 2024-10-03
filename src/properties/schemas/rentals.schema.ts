@@ -4,7 +4,10 @@ import { Documents } from '@/src/common/schemas/documents.schema';
 import {
   PROPERTY_RENTAL_FREQUENCY,
   PROPERTY_RENTAL_ROOM_TYPE,
+  PROPERTY_RESIDENCE_TYPES,
+  PROPERTY_OCCUPANCY_OPTION,
 } from '../enums/properties.enum';
+import { TenantEligibility } from '../interface/property-schema.interface';
 @Schema({ timestamps: true })
 export class Rentals extends Document {
   @Prop({
@@ -13,6 +16,12 @@ export class Rentals extends Document {
     default: PROPERTY_RENTAL_FREQUENCY.MONTHLY,
   })
   rentalFrequency: PROPERTY_RENTAL_FREQUENCY;
+  @Prop({
+    type: String,
+    enum: PROPERTY_RESIDENCE_TYPES,
+    default: PROPERTY_RESIDENCE_TYPES.FAMILY,
+  })
+  residenceType: PROPERTY_RESIDENCE_TYPES;
   @Prop({
     type: Number,
     default: 0,
@@ -90,22 +99,23 @@ export class Rentals extends Document {
   })
   rentalRoomType: PROPERTY_RENTAL_ROOM_TYPE;
   @Prop({
-    type: {
-      isPreferred: { type: Boolean },
-      preferredTenantCountry: { type: String },
-      preferredTenantCommunity: { type: String },
-    },
-    default: {
-      isPreferred: false,
-      preferredTenantCountry: '',
-      preferredTenantCommunity: '',
-    },
+    type: Boolean,
+    default: false,
   })
-  tenantEligibility: {
-    isPreferred: boolean;
-    preferredTenantCountry: string;
-    preferredTenantCommunity: string;
-  };
+  tenantEligibility: boolean;
+  @Prop({
+    default: {},
+  })
+  tenantEligibilityPreference: TenantEligibility;
+  @Prop({
+    type: String,
+    enum: PROPERTY_OCCUPANCY_OPTION,
+    default: PROPERTY_OCCUPANCY_OPTION.VACANT,
+  })
+  occupancyOption: PROPERTY_OCCUPANCY_OPTION;
+
+  @Prop({ default: null, type: Date })
+  deletedAt: Date;
 }
 
 export const RentalsSchema = SchemaFactory.createForClass(Rentals);

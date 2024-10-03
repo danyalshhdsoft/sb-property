@@ -31,12 +31,8 @@ import {
   PROPERTY_VERFICATION_CHECK,
 } from '../enums/properties.enum';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
-import { CATEGORY } from '../enums/category.enum';
-import {
-  AnalyticsCounts,
-  BuildingDTO,
-  SubCategoryDTO,
-} from './property-schema-sub.dto';
+import { CATEGORY } from '../../common/enums/category.enum';
+import { BuildingDTO, SubCategoryDTO } from './property-schema-sub.dto';
 import {
   PaymentPlanDTO,
   ProjectTimelineDTO,
@@ -141,9 +137,6 @@ export class CreatePropertyDto {
     message: 'Each property document ID must be a valid MongoDB ObjectId',
   })
   propertyDocuments: string[];
-
-  @IsOptional()
-  analyticsCounts?: AnalyticsCounts;
 
   //Optional Felds
 

@@ -16,16 +16,9 @@ import {
 import { Type } from 'class-transformer';
 
 import { STATUS } from '@/src/common/enums/global.enum';
-import { CATEGORY, SUB_CATEGORY } from '../enums/category.enum';
+import { CATEGORY, SUB_CATEGORY } from '../../common/enums/category.enum';
 import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
-
-export interface AnalyticsCounts {
-  buy: number;
-  sale: number;
-  rent: number;
-  totalProperties: number;
-}
 
 export interface SquareFeet {
   areaInSquareMeters: number;

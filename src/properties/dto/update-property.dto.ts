@@ -23,7 +23,7 @@ import {
   // PROPERTY_AS_PROJECT_TIMELINE,
 } from '../enums/properties.enum';
 // import { Type } from 'class-transformer';
-import { CATEGORY } from '../enums/category.enum';
+import { CATEGORY } from '../../common/enums/category.enum';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import {
   BuildingDTO,
@@ -39,13 +39,6 @@ import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
 import { AddCityDTO } from '@/src/locations/dto/add-city.dto';
 import { AddLocalAreaDTO } from '@/src/locations/dto/add-area.dto';
-
-interface AnalyticsCounts {
-  buy: number;
-  sale: number;
-  rent: number;
-  totalProperties: number;
-}
 
 export class UpdatePropertyDto {
   @IsString()
@@ -235,9 +228,6 @@ export class UpdatePropertyDto {
   @IsArray()
   @IsOptional()
   floorPlans?: string[];
-
-  @IsOptional()
-  analyticsCounts?: AnalyticsCounts;
 
   @IsString()
   @IsEnum(PROPERTY_REVIEW_STATUS)

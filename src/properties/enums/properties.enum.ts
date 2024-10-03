@@ -1,11 +1,10 @@
 export enum PROPERTY_PURPOSE {
-  BUY = 'BUY', //Optional: This means property user can buy which is for-sale
   SALE = 'SALE',
   RENT = 'RENT',
 }
 
 export enum PROPERTY_COMPLETION_STATUS {
-  UNDER_CONSTRUCTION = 'UNDER_CONSTRUCTION',
+  OFF_PLAN = 'OFF_PLAN',
   READY = 'READY',
 }
 
@@ -110,4 +109,27 @@ export enum PROPERTY_TENANCY_WAY_OF_PAYMENT {
   BANK_TRANSFER = 'BANK_TRANSFER',
   COURT_DEPOSIT = 'COURT_DEPOSIT',
   REGISTERED_ACCOUNT = 'REGISTERED_ACCOUNT',
+}
+
+export enum PROPERTY_OWNERSHIP_NATIONALITY {
+  GCC = 'GCC',
+  OTHER = 'OTHER',
+}
+
+export enum PROPERTY_PUBLISH_STATUS {
+  PUBLISH = 'PUBLISH', //indicates the listing is available and is online on the portal
+  UNPUBLISHED = 'UNPUBLISHED', //indicates the listing is no longer available, and is not pushed to portal
+  DRAFT = 'DRAFT', //saves the listing as a draft state to be able to edit at a later stage.
+  PENDING_APPROVAL = 'PENDING_APPROVAL', //sets the listing in queue to be proofed and approved by a manager or an admin before it can go live.
+}
+
+export enum PROPERTY_FINANCING_AVAILABLE {
+  AVAILABLE = 'AVAILABLE',
+  UNAVAILABLE = 'UNAVAILABLE',
+  UNKNOWN = 'UNKNOWN',
+}
+
+export enum PROPERTY_PERMIT_TYPE {
+  RERA = 'RERA',
+  DTCM = 'DTCM',
 }

@@ -6,10 +6,7 @@ import { Model } from 'mongoose';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { Properties } from './schemas/Properties.schema';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import {
-  PROPERTY_PURPOSE,
-  PROPERTY_REVIEW_STATUS,
-} from './enums/properties.enum';
+import { PROPERTY_REVIEW_STATUS } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
 
@@ -24,20 +21,6 @@ export class PropertiesService {
     try {
       const oPropertyRequests = { ...propertyRequests };
 
-      const nBuy = 0;
-      const nSale = 0;
-      const nRent = 0;
-      const nTotalProperties = 0;
-
-      const oAnalyticsCounts = {
-        buy: nBuy,
-        sale:
-          oPropertyRequests.purpose === PROPERTY_PURPOSE.SALE ? nSale + 1 : 0,
-        rent:
-          oPropertyRequests.purpose === PROPERTY_PURPOSE.RENT ? nRent + 1 : 0,
-        totalProperties: nTotalProperties + 1,
-      };
-
       const slug =
         oPropertyRequests.propertyListingTitle &&
         oPropertyRequests.propertyListingTitle !== ''
@@ -46,7 +29,6 @@ export class PropertiesService {
               .replace(/\s+/g, '-')
           : '';
       propertyRequests['slug'] = slug;
-      propertyRequests['analyticsCounts'] = oAnalyticsCounts;
 
       if (
         (oPropertyRequests && oPropertyRequests.placeId === '') ||
@@ -95,40 +77,6 @@ export class PropertiesService {
 
       if (!oExistingProperty) {
         throw new NotFoundException('Property not found');
-      }
-
-      const oldPurpose = oExistingProperty.purpose;
-      const newPurpose = propertyRequests.purpose;
-
-      if (oldPurpose && newPurpose && oldPurpose !== newPurpose) {
-        // Decrement the count for the old purpose
-        if (oldPurpose === PROPERTY_PURPOSE.RENT) {
-          oExistingProperty.analyticsCounts.rent = Math.max(
-            0,
-            oExistingProperty.analyticsCounts.rent - 1,
-          );
-        } else if (oldPurpose === PROPERTY_PURPOSE.SALE) {
-          oExistingProperty.analyticsCounts.sale = Math.max(
-            0,
-            oExistingProperty.analyticsCounts.sale - 1,
-          );
-        } else if (oldPurpose === PROPERTY_PURPOSE.BUY) {
-          oExistingProperty.analyticsCounts.buy = Math.max(
-            0,
-            oExistingProperty.analyticsCounts.buy - 1,
-          );
-        }
-
-        // Increment the count for the new purpose
-        if (newPurpose === PROPERTY_PURPOSE.RENT) {
-          oExistingProperty.analyticsCounts.rent += 1;
-        } else if (newPurpose === PROPERTY_PURPOSE.SALE) {
-          oExistingProperty.analyticsCounts.sale += 1;
-        } else if (newPurpose === PROPERTY_PURPOSE.BUY) {
-          oExistingProperty.analyticsCounts.buy += 1;
-        }
-
-        propertyRequests.analyticsCounts = oExistingProperty.analyticsCounts;
       }
 
       const slug =

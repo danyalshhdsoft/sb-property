@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { SUB_CATEGORY } from '../enums/category.enum';
+import { SUB_CATEGORY } from '../../common/enums/category.enum';
 import { PROPERTY_LISTING_STATUS } from '../enums/properties.enum';
 import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
