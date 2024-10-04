@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 import { Documents } from '@/src/common/schemas/documents.schema';
 import {
   PROPERTY_RENTAL_FREQUENCY,
-  PROPERTY_RENTAL_ROOM_TYPE,
+  // PROPERTY_RENTAL_ROOM_TYPE,
   PROPERTY_RESIDENCE_TYPES,
   PROPERTY_OCCUPANCY_OPTION,
 } from '../enums/properties.enum';
@@ -37,11 +37,11 @@ export class Rentals extends Document {
     default: null,
   })
   startDate: Date;
-  @Prop({
-    type: Date,
-    default: null,
-  })
-  endDate: Date;
+  // @Prop({
+  //   type: Date,
+  //   default: null,
+  // })
+  // endDate: Date;
   @Prop({
     type: String,
     default: '',
@@ -81,7 +81,7 @@ export class Rentals extends Document {
     type: Number,
     default: 0,
   })
-  tenantCount: number;
+  numberOfTenant: number;
   @Prop({
     type: String,
     default: '', //Male/Female/Other
@@ -93,11 +93,17 @@ export class Rentals extends Document {
   })
   balcony: boolean;
   @Prop({
-    type: String,
-    enum: PROPERTY_RENTAL_ROOM_TYPE,
-    default: PROPERTY_RENTAL_ROOM_TYPE.PRIVATE_ROOM,
+    type: Boolean,
+    default: false,
   })
-  rentalRoomType: PROPERTY_RENTAL_ROOM_TYPE;
+  attachedBathroom: boolean;
+  //
+  // @Prop({
+  //   type: String,
+  //   enum: PROPERTY_RENTAL_ROOM_TYPE,
+  //   default: PROPERTY_RENTAL_ROOM_TYPE.PRIVATE_ROOM,
+  // })
+  // rentalRoomType: PROPERTY_RENTAL_ROOM_TYPE;
   @Prop({
     type: Boolean,
     default: false,

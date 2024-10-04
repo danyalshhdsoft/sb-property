@@ -17,7 +17,10 @@ import {
   PROPERTY_PERMIT_TYPE,
 } from '../enums/properties.enum';
 
-import { Documents } from '@/src/common/schemas/documents.schema';
+import {
+  Documents,
+  DocumentsSchema,
+} from '@/src/common/schemas/documents.schema';
 import { Developers } from '@/src/developers/schemas/developers.schema';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import { Locations } from '@/src/locations/schemas/location.schema';
@@ -31,6 +34,7 @@ import { PropertyType } from '@/src/common/schemas/property-type.schema';
 import {
   PaymentPlan,
   ProjectTimeline,
+  PropertyDocument,
   SquareFeet,
 } from '../interface/property-schema.interface';
 import {
@@ -55,7 +59,6 @@ export class Properties extends Document {
 
   @Prop({
     type: String,
-    required: true,
   })
   titleArabic: string;
 
@@ -70,7 +73,6 @@ export class Properties extends Document {
 
   @Prop({
     type: String,
-    required: true,
   })
   descriptionArabic: string;
 
@@ -321,10 +323,21 @@ export class Properties extends Document {
 
   //documents, propertyimage, video, 360 image needs a field decided
   @Prop({
+    type: {
+      image: [{ link: String, meta: { type: DocumentsSchema } }],
+      image360: [{ link: String, meta: { type: DocumentsSchema } }],
+      videoLinks: [{ link: String, meta: { type: DocumentsSchema } }],
+    },
+    default: () => ({}),
+  })
+  media: PropertyDocument;
+
+  //working on the structure and flow
+  @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
     default: [],
   })
-  documents: mongoose.Schema.Types.ObjectId[];
+  legaldocuments: mongoose.Schema.Types.ObjectId[];
 
   @Prop({
     type: [
