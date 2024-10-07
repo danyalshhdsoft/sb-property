@@ -1,6 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Documents } from '@/src/common/schemas/documents.schema';
 import {
   PROPERTY_RENTAL_FREQUENCY,
   // PROPERTY_RENTAL_ROOM_TYPE,
@@ -63,16 +61,6 @@ export class Rentals extends Document {
   })
   minimumContract: string;
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
-    default: [],
-  })
-  rentalDocuments: mongoose.Schema.Types.ObjectId[];
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Properties',
-  })
-  propertyId: mongoose.Schema.Types.ObjectId;
-  @Prop({
     type: Number,
     default: 0,
   })
@@ -87,16 +75,7 @@ export class Rentals extends Document {
     default: '', //Male/Female/Other
   })
   preferredTenant: string;
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  balcony: boolean;
-  @Prop({
-    type: Boolean,
-    default: false,
-  })
-  attachedBathroom: boolean;
+
   //
   // @Prop({
   //   type: String,

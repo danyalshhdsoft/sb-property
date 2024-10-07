@@ -12,7 +12,6 @@ export class FloorPlans extends Document {
     required: true,
     type: String,
     enum: STATUS,
-    default: STATUS.PENDING,
   })
   documentStatus: string;
   @Prop({

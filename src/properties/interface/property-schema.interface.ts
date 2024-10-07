@@ -24,13 +24,13 @@ export interface TenantEligibility {
   preferredTenantCommunity: string;
 }
 
-interface PropertyDocumentObjectData {
-  link: string;
-  meta: any;
+export interface PropertyDocument {
+  imageUrl: string[];
+  image360Url: string[];
+  videoLinksUrl: string[];
 }
 
-export interface PropertyDocument {
-  image: PropertyDocumentObjectData[];
-  image360: PropertyDocumentObjectData[];
-  videoLinks: PropertyDocumentObjectData[];
+export interface LicenseCriteria {
+  title: string;
+  isActive: boolean;
 }

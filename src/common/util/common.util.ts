@@ -20,4 +20,5 @@ export const commercialPlaceTypes = [
   'art_gallery',
   'movie_theater',
   'night_club',
+  'geocode',
 ];

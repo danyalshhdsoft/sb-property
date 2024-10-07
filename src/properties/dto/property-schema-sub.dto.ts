@@ -12,6 +12,7 @@ import {
   IsObject,
   IsBoolean,
   ValidateNested,
+  IsDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -19,6 +20,13 @@ import { STATUS } from '@/src/common/enums/global.enum';
 import { CATEGORY, SUB_CATEGORY } from '../../common/enums/category.enum';
 import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
+import {
+  PROPERTY_OCCUPANCY_OPTION,
+  PROPERTY_PREFERRED_TENANT,
+  PROPERTY_RENTAL_FREQUENCY,
+  PROPERTY_RESIDENCE_TYPES,
+} from '../enums/properties.enum';
+// import { AmenitiesOptions } from '@/src/common/interfaces/amenities-options.interface';
 
 export interface SquareFeet {
   areaInSquareMeters: number;
@@ -139,3 +147,87 @@ export class BuildingDTO {
   @IsMongoId()
   listingOwner: string; //AgentId/AdminId
 }
+
+export class RentalsSchemaDTO {
+  @IsOptional()
+  @IsString()
+  @IsEnum(PROPERTY_RENTAL_FREQUENCY)
+  rentalFrequency?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(PROPERTY_RESIDENCE_TYPES)
+  residenceType?: string;
+
+  @IsNumber()
+  @IsOptional()
+  rentalPrice?: number;
+
+  @IsNumber()
+  @IsOptional()
+  vacatingNoticePeriod?: number;
+
+  @IsDate()
+  @IsOptional()
+  startDate?: Date;
+
+  @IsString()
+  @IsOptional()
+  totalRentalPeriod?: string;
+
+  @IsNumber()
+  @IsOptional()
+  maintainanceFee?: number;
+
+  @IsBoolean()
+  @IsOptional()
+  isNegotiable?: boolean;
+
+  @IsString()
+  @IsOptional()
+  minimumContract?: string;
+
+  @IsNumber()
+  @IsOptional()
+  securityDeposit?: number;
+
+  @IsNumber()
+  @IsOptional()
+  numberOfTenant?: number;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(PROPERTY_PREFERRED_TENANT)
+  preferredTenant?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  tenantEligibility?: boolean;
+
+  @IsObject()
+  @IsOptional()
+  tenantEligibilityPreference?: object;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(PROPERTY_OCCUPANCY_OPTION)
+  occupancyOption?: string;
+}
+
+// export class AmenitiesSchemaDTO {
+//   @IsOptional()
+//   @IsString()
+//   title?: string;
+
+//   @IsOptional()
+//   @IsString()
+//   code?: string;
+
+//   @IsOptional()
+//   @IsBoolean()
+//   display?: boolean;
+
+//   @IsOptional()
+//   @IsArray()
+//   options?: AmenitiesOptions[];
+// }

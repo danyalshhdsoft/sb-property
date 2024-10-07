@@ -17,10 +17,6 @@ import {
   PROPERTY_PERMIT_TYPE,
 } from '../enums/properties.enum';
 
-import {
-  Documents,
-  DocumentsSchema,
-} from '@/src/common/schemas/documents.schema';
 import { Developers } from '@/src/developers/schemas/developers.schema';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import { Locations } from '@/src/locations/schemas/location.schema';
@@ -41,6 +37,7 @@ import {
   Amenities,
   AmenitiesSchema,
 } from '@/src/common/schemas/amenities.schema';
+import { PropertyLicenses } from './property-license.schema';
 
 @Schema({ timestamps: true })
 export class Properties extends Document {
@@ -56,6 +53,12 @@ export class Properties extends Document {
     required: true,
   })
   title: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  titleDeed: string;
 
   @Prop({
     type: String,
@@ -137,6 +140,8 @@ export class Properties extends Document {
   })
   referenceNo: string;
 
+  //not from client-side
+  //but to fetch from locationMetaData and save
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Buildings.name })
   building: mongoose.Schema.Types.ObjectId; //keep building
 
@@ -191,7 +196,7 @@ export class Properties extends Document {
   @Prop({
     type: String,
     enum: PROPERTY_LISTING_STATUS,
-    default: PROPERTY_LISTING_STATUS.ACTIVE,
+    default: PROPERTY_LISTING_STATUS.INACTIVE,
   })
   status: PROPERTY_LISTING_STATUS;
 
@@ -208,6 +213,12 @@ export class Properties extends Document {
     default: '',
   })
   availability: PROPERTY_AVAILABILITY_STATUS;
+
+  @Prop({
+    type: String,
+    default: '',
+  })
+  unavailabliltyReason: string;
 
   @Prop({ default: null, type: Date })
   availableDate: Date; //when the availability option is AVAILABLE then give this date
@@ -255,8 +266,14 @@ export class Properties extends Document {
   })
   hasBalcony: boolean;
 
+  @Prop({
+    type: Boolean,
+    default: false,
+  })
+  hasAttachedBathroom: boolean;
+
   @Prop({ type: AmenitiesSchema, default: [] })
-  amenities: Amenities;
+  amenities: Amenities[];
 
   @Prop({
     type: Number,
@@ -323,21 +340,23 @@ export class Properties extends Document {
 
   //documents, propertyimage, video, 360 image needs a field decided
   @Prop({
-    type: {
-      image: [{ link: String, meta: { type: DocumentsSchema } }],
-      image360: [{ link: String, meta: { type: DocumentsSchema } }],
-      videoLinks: [{ link: String, meta: { type: DocumentsSchema } }],
-    },
     default: () => ({}),
   })
-  media: PropertyDocument;
+  media: PropertyDocument; //Don't forget to save document meta-data in Document schema
+  @Prop({
+    type: [
+      { type: mongoose.Schema.Types.ObjectId, ref: PropertyLicenses.name },
+    ],
+    default: [],
+  })
+  licenseType: mongoose.Schema.Types.ObjectId[];
 
   //working on the structure and flow
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
+    type: [String],
     default: [],
   })
-  legaldocuments: mongoose.Schema.Types.ObjectId[];
+  legaldocuments: string[];
 
   @Prop({
     type: [

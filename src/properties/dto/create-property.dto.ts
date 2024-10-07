@@ -8,51 +8,106 @@ import {
   IsMongoId,
   ArrayNotEmpty,
   IsEnum,
-  // ArrayUnique,
-  // ValidateNested,
   IsObject,
   ValidateNested,
   IsNotEmptyObject,
+  Min,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
   PROPERTY_AVAILABILITY_STATUS,
-  // PROPERTY_AS_PROJECT_TIMELINE,
   PROPERTY_COMPLETION_STATUS,
-  PROPERTY_CONSTRUCTION_STATUS,
+  PROPERTY_FINANCING_AVAILABLE,
   PROPERTY_LISTING_STATUS,
-  PROPERTY_OCCUPANCY_OPTION,
   PROPERTY_OFF_PLAN_SALE_TYPE,
+  PROPERTY_OWNERSHIP_NATIONALITY,
   PROPERTY_OWNERSHIP_STATUS,
+  PROPERTY_PAID_BY,
+  PROPERTY_PERMIT_TYPE,
+  PROPERTY_PUBLISH_STATUS,
   PROPERTY_PURPOSE,
-  PROPERTY_RESIDENCE_TYPES,
   PROPERTY_REVIEW_STATUS,
   PROPERTY_TENANCY_WAY_OF_PAYMENT,
-  PROPERTY_VERFICATION_CHECK,
 } from '../enums/properties.enum';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
-import { CATEGORY } from '../../common/enums/category.enum';
-import { BuildingDTO, SubCategoryDTO } from './property-schema-sub.dto';
-import {
-  PaymentPlanDTO,
-  ProjectTimelineDTO,
-} from '@/src/common/dto/common-properties-sub.dto';
-import { AddCityDTO } from '@/src/locations/dto/add-city.dto';
-import { AddLocalAreaDTO } from '@/src/locations/dto/add-area.dto';
-import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
-import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
+import { RentalsSchemaDTO } from './property-schema-sub.dto';
 
-export class CreatePropertyDto {
+class PropertyDocument {
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  imageUrl: string[];
+
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  image360Url: string[];
+
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  videoLinksUrl: string[];
+}
+
+class PaymentPlanDTO {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @IsEnum(CATEGORY)
-  category: string;
+  title: string;
 
-  @IsObject()
-  @Type(() => SubCategoryDTO)
-  @ValidateNested()
-  @IsNotEmptyObject()
-  subCategory: SubCategoryDTO;
+  @IsOptional()
+  @IsNumber()
+  percentage: number;
+
+  @IsOptional()
+  @IsString()
+  caption: string;
+
+  @IsOptional()
+  @IsNumber()
+  serial: number;
+}
+
+class ProjectTimelineDTO {
+  @IsOptional()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsDate()
+  date: Date;
+
+  @IsOptional()
+  @IsString()
+  subtitle: string;
+
+  @IsOptional()
+  @IsNumber()
+  serial: number;
+}
+
+class SquareFeetDTO {
+  @IsOptional()
+  @IsNumber()
+  areaInSquareMeters;
+
+  @IsOptional()
+  @IsNumber()
+  areaInSquareYards;
+
+  @IsNumber()
+  @Min(0.01)
+  totalAreaInSquareFeet;
+
+  @IsOptional()
+  @IsNumber()
+  pricePerSquareFeet;
+}
+export class CreatePropertyDto {
+  @IsMongoId()
+  @IsNotEmpty()
+  @IsString()
+  propertyType: string;
 
   @IsString()
   @IsNotEmpty()
@@ -64,12 +119,28 @@ export class CreatePropertyDto {
   @IsEnum(PROPERTY_COMPLETION_STATUS)
   completionStatus: string;
 
-  @IsString()
-  @IsNotEmpty()
-  propertyListingTitle: string;
+  financingAvailability: PROPERTY_FINANCING_AVAILABLE;
+
+  financingInstitute: string;
 
   @IsString()
   @IsNotEmpty()
+  title: string;
+
+  titleDeed: string;
+
+  titleArabic: string;
+
+  descriptionArabic: string;
+
+  @IsString()
+  @IsNotEmpty()
+  // @MinLength(10, {
+  //   message: 'Description is too short',
+  // })
+  // @MaxLength(50, {
+  //   message: 'Description is too long',
+  // })
   description: string;
 
   @IsString()
@@ -77,47 +148,28 @@ export class CreatePropertyDto {
   referenceNo: string;
 
   @IsString()
-  @IsMongoId()
-  location?: string;
-
-  @IsArray()
-  @Type(() => AddCityDTO)
-  @ValidateNested({ each: true })
-  @ArrayNotEmpty()
-  city?: AddCityDTO[];
-
-  @IsArray()
-  @Type(() => AddLocalAreaDTO)
-  @ValidateNested({ each: true })
-  @ArrayNotEmpty()
-  local?: AddLocalAreaDTO[];
-
-  @IsString()
   @IsNotEmpty()
   @IsEnum(PROPERTY_LISTING_STATUS)
   status: string;
 
   @IsString()
-  @IsNotEmpty()
   @IsEnum(PROPERTY_OWNERSHIP_STATUS)
-  ownershipStatus: string;
+  ownershipStatus: PROPERTY_OWNERSHIP_STATUS; //can be empty string?
 
-  @Type(() => Date)
-  // @IsDate()
-  expiryDate: Date;
+  @IsString()
+  @IsEnum(PROPERTY_OWNERSHIP_NATIONALITY)
+  ownershipNationality: PROPERTY_OWNERSHIP_NATIONALITY;
+ 
+  tenancyForYears: string;
 
   @IsNumber()
-  propertyListingPrice: number;
+  @Min(0.01)
+  price: number;
 
-  @IsString()
-  @IsNotEmpty()
-  @IsMongoId()
-  developerId: string;
-
-  @IsString()
   @IsOptional()
+  @IsString()
   @IsMongoId()
-  projectId?: string;
+  developer?: string;
 
   //Rentals
   @IsString()
@@ -130,61 +182,57 @@ export class CreatePropertyDto {
   @IsEnum(PROPERTY_REVIEW_STATUS)
   reviewStatus: string; //pending,approve,rejected
 
-  @IsArray()
-  @ArrayNotEmpty({ message: 'Property documents should not be empty' })
-  @IsMongoId({
-    each: true,
-    message: 'Each property document ID must be a valid MongoDB ObjectId',
-  })
-  propertyDocuments: string[];
+  @IsObject()
+  @Type(() => PropertyDocument)
+  @ValidateNested()
+  media: PropertyDocument;
+
+  licenseType: string[];
+
+  legaldocuments: string[];
 
   //Optional Felds
 
   @IsOptional()
+  @IsString()
   address?: string;
 
   @IsOptional()
-  autoRenewal?: boolean;
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  renewalDate?: Date;
-
-  @IsOptional()
+  @IsNumber()
   bedrooms?: number;
 
   @IsOptional()
+  @IsNumber()
   parkingSlots?: number;
 
   @IsOptional()
+  @IsString()
   currency?: string;
 
   @IsOptional()
+  @IsBoolean()
   isFurnished?: boolean;
 
   @IsOptional()
-  balcony?: boolean;
+  @IsBoolean()
+  hasBalcony?: boolean;
+
+  hasAttachedBathroom: boolean;
 
   @IsOptional()
+  @IsNumber()
   washrooms?: number;
 
   @IsOptional()
+  @IsDate()
   handoverDate?: Date;
 
-  @IsOptional()
-  listedTimeStamp?: Date;
+  permitType: PROPERTY_PERMIT_TYPE;
+
+  permitNumber: number;
 
   @IsOptional()
-  createdAt?: Date;
-
-  @IsOptional()
-  updatedAt?: Date;
-
-  @IsOptional()
-  deletedAt?: Date;
-
-  @IsOptional()
+  @IsEnum(PROPERTY_PAID_BY)
   paidBy?: string;
 
   @IsOptional()
@@ -192,70 +240,60 @@ export class CreatePropertyDto {
   paymentOptions?: string;
 
   @IsOptional()
-  @IsObject()
+  @IsArray()
   @Type(() => PaymentPlanDTO)
-  @ValidateNested()
-  paymentPlan?: PaymentPlanDTO;
+  @ValidateNested({ each: true })
+  paymentPlan?: PaymentPlanDTO[];
 
   @IsOptional()
-  @IsObject()
+  @IsArray()
   @Type(() => ProjectTimelineDTO)
-  @ValidateNested()
-  projectTimeline?: ProjectTimelineDTO;
+  @ValidateNested({ each: true })
+  projectTimeline?: ProjectTimelineDTO[];
 
-  @IsOptional()
-  squareFeet?: object;
+  @IsObject()
+  @Type(() => SquareFeetDTO)
+  @ValidateNested()
+  @IsNotEmptyObject()
+  squareFeet?: SquareFeetDTO;
 
   @IsOptional()
   @IsNumber()
   serviceCharge?: number;
 
-  @IsString()
-  @IsOptional()
-  rentalId?: string;
+  @IsObject()
+  @Type(() => RentalsSchemaDTO)
+  @ValidateNested()
+  rentals?: RentalsSchemaDTO;
 
   @IsOptional()
+  @IsArray()
+  @IsMongoId({
+    each: true,
+    message: 'Each floor plan document ID must be a valid MongoDB ObjectId',
+  })
   floorPlans?: string[];
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => AmenitiesDTO) // Validate the array of amenities
-  @IsUniqueSlug({ message: 'Duplicate slug values are not allowed' })
-  amenities: AmenitiesDTO[];
-
-  @IsString()
-  @IsEnum(PROPERTY_OCCUPANCY_OPTION)
-  occupancyOption: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_RESIDENCE_TYPES)
-  residenceType: string;
 
   @IsString()
   @IsEnum(PROPERTY_AVAILABILITY_STATUS)
-  availabilityStatus: string;
+  availability: string;
 
-  @IsString()
-  @IsEnum(PROPERTY_CONSTRUCTION_STATUS)
-  constructionStatus: string;
+  unavailabliltyReason: string;
 
-  @IsString()
-  @IsEnum(PROPERTY_VERFICATION_CHECK)
-  verificationService: string;
+  availableDate: Date;
+
+  publishStatus: PROPERTY_PUBLISH_STATUS;
+
+  publishedAt: Date;
 
   @IsString()
   @IsEnum(PROPERTY_OFF_PLAN_SALE_TYPE)
   offplanSaleType: string;
 
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   @IsEnum(PROPERTY_TENANCY_WAY_OF_PAYMENT)
-  tenancyWayOfPayments: string;
-
-  @IsObject()
-  @Type(() => BuildingDTO)
-  @ValidateNested()
-  @IsNotEmptyObject()
-  buildingData: BuildingDTO;
+  tenancyWayOfPayments: string[];
 
   locationMetaData: any;
 
@@ -263,3 +301,10 @@ export class CreatePropertyDto {
   @IsNotEmpty()
   placeId: string;
 }
+
+//TBD if needed or not?
+// @IsOptional()
+// @ValidateNested({ each: true })
+// @Type(() => AmenitiesDTO) // Validate the array of amenities
+// @IsUniqueSlug({ message: 'Duplicate slug values are not allowed' })
+// amenities: AmenitiesDTO[];

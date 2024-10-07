@@ -41,3 +41,8 @@ export enum STATUS {
   PENDING = 'PENDING',
   REJECTED = 'REJECTED',
 }
+
+export enum DOCUMENT_STATUS {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
