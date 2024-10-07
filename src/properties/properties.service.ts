@@ -12,6 +12,7 @@ import {
 } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
+import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
 
 @Injectable()
 export class PropertiesService {
@@ -19,6 +20,7 @@ export class PropertiesService {
     @InjectModel(Properties.name)
     private PropertiesModel: Model<Properties>,
     private LocationService: LocationsService,
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
   async addNewPropertyByAdmin(propertyRequests: CreatePropertyDto) {
     try {
@@ -72,7 +74,11 @@ export class PropertiesService {
         oAddLocationData?.locationId.toString();
       //check for building embedded document field in schema to save
       const newProperty = await this.PropertiesModel.create(oPropertyRequests);
+      //console.log(JSON.stringify(newProperty));
 
+      const searchableDocument = this._constructDocument(oPropertyRequests);
+      await this.elasticsearchService.indexDocument('properties', newProperty._id.toString(), searchableDocument);
+      
       return {
         status: 200,
         data: newProperty,
@@ -80,6 +86,26 @@ export class PropertiesService {
       };
     } catch (oError) {
       throw new RpcException(oError);
+    }
+  }
+
+  _constructDocument(
+    oPropertyRequests
+  ) {
+    return {
+      washroom: oPropertyRequests.washroom,
+      bedroom: oPropertyRequests.bedroom,
+      area: oPropertyRequests.local[0].metadata.vicinity,
+      building: oPropertyRequests.local[0].metadata.name,
+      price: oPropertyRequests.price,
+      purpose: oPropertyRequests.purpose,
+      status: oPropertyRequests.status,
+      propertyType: oPropertyRequests.subCategory.categoryType,
+      completionStatus: oPropertyRequests.completionStatus,
+      publishedAt: oPropertyRequests.publishedAt,
+      squareFeet: oPropertyRequests.squareFeet,
+      description: oPropertyRequests.description,
+      propertyListingTitle: oPropertyRequests.propertyListingPrice
     }
   }
 
@@ -176,6 +202,9 @@ export class PropertiesService {
       if (!oUpdateProperty) {
         throw new NotFoundException(`Property with ID ${id} not found`);
       }
+      
+      await this.elasticsearchService.updateDocument('properties', id, propertyRequests);
+      
       return {
         status: 200,
         data: oUpdateProperty,
@@ -254,5 +283,18 @@ export class PropertiesService {
     } catch (oError) {
       throw new RpcException(oError);
     }
+  }
+
+  async searchProducts(query: string): Promise<any> {
+    const searchQuery = {
+      query: {
+        multi_match: {
+          query,
+          fields: ['propertyListingTitle', 'description']
+        }
+      }
+    };
+
+    return await this.elasticsearchService.search('properties', searchQuery);
   }
 }
