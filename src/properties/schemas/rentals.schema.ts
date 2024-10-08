@@ -6,6 +6,7 @@ import {
   PROPERTY_OCCUPANCY_OPTION,
 } from '../enums/properties.enum';
 import { TenantEligibility } from '../interface/property-schema.interface';
+import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Rentals extends Document {
   @Prop({

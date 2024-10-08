@@ -30,6 +30,13 @@ export interface PropertyDocument {
   videoLinksUrl: string[];
 }
 
+export interface PropertyFloorPlanImages {
+  image2ds: string[];
+  image3ds: string[];
+  videos: string[];
+  others: string[];
+}
+
 export interface LicenseCriteria {
   title: string;
   isActive: boolean;

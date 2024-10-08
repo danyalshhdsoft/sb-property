@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { STATUS } from '@/src/common/enums/global.enum';
-import { Documents } from '@/src/common/schemas/documents.schema';
 // import { User } from '@/src/users/schemas/user.schema';
 import { Locations } from '@/src/locations/schemas/location.schema';
 import { FLOOR_PLAN_STATE } from '../enums/properties.enum';
+import { PropertyFloorPlanImages } from '../interface/property-schema.interface';
 
 @Schema({ timestamps: true })
 export class FloorPlans extends Document {
@@ -24,49 +24,9 @@ export class FloorPlans extends Document {
 
   //does each image(image2d, image3d etc..) need a description and title with it?
   @Prop({
-    type: {
-      image2ds: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: Documents.name,
-          default: null,
-        },
-      ],
-      image3ds: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: Documents.name,
-          default: null,
-        },
-      ],
-      videos: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: Documents.name,
-          default: null,
-        },
-      ],
-      others: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: Documents.name,
-          default: null,
-        },
-      ],
-    },
-    default: {
-      image2ds: [],
-      image3ds: [],
-      videos: [],
-      others: [],
-    },
+    default: () => ({}),
   })
-  images: {
-    image2ds: mongoose.Schema.Types.ObjectId[];
-    image3ds: mongoose.Schema.Types.ObjectId[];
-    videos: mongoose.Schema.Types.ObjectId[];
-    others: mongoose.Schema.Types.ObjectId[];
-  };
+  images: PropertyFloorPlanImages; //Don't forget to save document meta-data in Document schema
 
   @Prop({
     required: true,

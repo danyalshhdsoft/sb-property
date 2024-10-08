@@ -4,7 +4,7 @@ export interface AmenitiesOptions {
   component: string;
   type: any;
   options: string[];
-  value: string;
+  value: any;
   multipleSelection: boolean;
   display: boolean;
   required: boolean;

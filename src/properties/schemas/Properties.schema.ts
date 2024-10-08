@@ -56,7 +56,7 @@ export class Properties extends Document {
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   titleDeed: string;
 
@@ -130,7 +130,9 @@ export class Properties extends Document {
   })
   financingInstitute: string; //only when purpose is sale
 
-  //to fetch rental data
+  //to fetch rental data on retrieval
+  //promise function to save rental info in rentalschema by
+  //validating from RentalsSchemaDTO and using in promise call
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Rentals.name })
   rental: mongoose.Schema.Types.ObjectId;
 
@@ -141,10 +143,14 @@ export class Properties extends Document {
   referenceNo: string;
 
   //not from client-side
-  //but to fetch from locationMetaData and save
+  //but to fetch from locationMetaData and save 
+  //and add the building primary id got from callback of addNewLocation
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Buildings.name })
   building: mongoose.Schema.Types.ObjectId; //keep building
 
+  //from client-request totalAreaInSquareFeet and pricePerSquareFeet will come
+  //rest of the data in this object calculate and save
+  //the DTO is going to validate these 2 fields too
   @Prop({
     type: Object,
     default: {},
@@ -277,7 +283,7 @@ export class Properties extends Document {
 
   @Prop({
     type: Number,
-    default: 0,
+    required: true,
   })
   price: number; //property price
 
@@ -326,7 +332,7 @@ export class Properties extends Document {
   handoverDate: Date;
 
   @Prop({
-    type: [String],
+    type: String,
     enum: PROPERTY_PERMIT_TYPE,
     required: true,
   })

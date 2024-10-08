@@ -1,278 +1,325 @@
 import {
-  IsString,
-  IsBoolean,
   IsNumber,
-  // IsDate,
+  IsString,
   IsOptional,
-  IsEnum,
+  IsDate,
   IsArray,
+  IsMongoId,
+  IsEnum,
   IsObject,
   ValidateNested,
-  IsMongoId,
-  IsNotEmpty,
-  ArrayNotEmpty,
-  // ValidateNested,
+  Min,
+  IsBoolean,
+  IsUrl,
 } from 'class-validator';
-import {
-  PROPERTY_PURPOSE,
-  PROPERTY_COMPLETION_STATUS,
-  PROPERTY_LISTING_STATUS,
-  PROPERTY_OWNERSHIP_STATUS,
-  PROPERTY_PAID_BY,
-  PROPERTY_REVIEW_STATUS,
-  // PROPERTY_AS_PROJECT_TIMELINE,
-} from '../enums/properties.enum';
-// import { Type } from 'class-transformer';
-import { CATEGORY } from '../../common/enums/category.enum';
-import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
-import {
-  BuildingDTO,
-  SquareFeet,
-  SubCategoryDTO,
-} from './property-schema-sub.dto';
 import { Type } from 'class-transformer';
 import {
-  PaymentPlanDTO,
-  ProjectTimelineDTO,
-} from '@/src/common/dto/common-properties-sub.dto';
-import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
-import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
-import { AddCityDTO } from '@/src/locations/dto/add-city.dto';
-import { AddLocalAreaDTO } from '@/src/locations/dto/add-area.dto';
+  PROPERTY_AVAILABILITY_STATUS,
+  PROPERTY_COMPLETION_STATUS,
+  PROPERTY_FINANCING_AVAILABLE,
+  PROPERTY_OFF_PLAN_SALE_TYPE,
+  PROPERTY_OWNERSHIP_NATIONALITY,
+  PROPERTY_OWNERSHIP_STATUS,
+  PROPERTY_PAID_BY,
+  PROPERTY_PERMIT_TYPE,
+  PROPERTY_PUBLISH_STATUS,
+  PROPERTY_PURPOSE,
+  PROPERTY_TENANCY_WAY_OF_PAYMENT,
+} from '../enums/properties.enum';
+import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
+import {
+  AmenitiesSchemaDTO,
+  FloorPlansImagesDTO,
+  RentalsSchemaDTO,
+} from './property-schema-sub.dto';
 
-export class UpdatePropertyDto {
-  @IsString()
-  @IsEnum(CATEGORY)
+class PropertyDocument {
   @IsOptional()
-  category?: string;
+  @IsArray()
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  imageUrl?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  image360Url?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  videoLinksUrl?: string[];
+}
+
+class PaymentPlanDTO {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsNumber()
+  percentage?: number;
+
+  @IsOptional()
+  @IsString()
+  caption?: string;
+
+  @IsOptional()
+  @IsNumber()
+  serial?: number;
+}
+
+class ProjectTimelineDTO {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsDate()
+  date?: Date;
+
+  @IsOptional()
+  @IsString()
+  subtitle?: string;
+
+  @IsOptional()
+  @IsNumber()
+  serial?: number;
+}
+export class UpdatePropertyDto {
+  @IsMongoId()
+  @IsOptional()
+  @IsString()
+  propertyType?: string;
+
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  titleDeed?: string;
+
+  @IsString()
+  @IsOptional()
+  titleArabic?: string;
+
+  @IsString()
+  @IsOptional()
+  // @MinLength(10, {
+  //   message: 'Description is too short',
+  // })
+  // @MaxLength(50, {
+  //   message: 'Description is too long',
+  // })
+  description?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionArabic?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(PROPERTY_PURPOSE)
+  purpose?: PROPERTY_PURPOSE;
+
+  @IsString()
+  @IsEnum(PROPERTY_OWNERSHIP_STATUS)
+  @IsOptional()
+  ownershipStatus?: PROPERTY_OWNERSHIP_STATUS; //can be empty string?
+
+  @IsString()
+  @IsEnum(PROPERTY_OWNERSHIP_NATIONALITY)
+  @IsOptional()
+  ownershipNationality?: PROPERTY_OWNERSHIP_NATIONALITY;
+
+  @IsString()
+  @IsOptional()
+  tenancyForYears?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(PROPERTY_COMPLETION_STATUS)
+  completionStatus?: PROPERTY_COMPLETION_STATUS;
+
+  @IsString()
+  @IsEnum(PROPERTY_OFF_PLAN_SALE_TYPE)
+  @IsOptional()
+  offplanSaleType?: PROPERTY_OFF_PLAN_SALE_TYPE;
+
+  @IsString()
+  @IsEnum(PROPERTY_FINANCING_AVAILABLE)
+  @IsOptional()
+  financingAvailability?: PROPERTY_FINANCING_AVAILABLE;
+
+  @IsString()
+  @IsOptional()
+  financingInstitute?: string;
 
   @IsObject()
-  @Type(() => SubCategoryDTO)
+  @Type(() => RentalsSchemaDTO)
   @ValidateNested()
   @IsOptional()
-  subCategory?: SubCategoryDTO;
+  rentals?: RentalsSchemaDTO;
 
-  @IsString()
-  @IsEnum(PROPERTY_PURPOSE)
   @IsOptional()
-  purpose?: string;
-
   @IsString()
-  @IsEnum(PROPERTY_COMPLETION_STATUS)
-  @IsOptional()
-  completionStatus?: string;
-
-  @IsString()
-  @IsOptional()
-  propertyListingTitle?: string;
-
-  @IsString()
-  @IsOptional()
-  description?: string;
+  rentalId?: string;
 
   @IsString()
   @IsOptional()
   referenceNo?: string;
 
-  @IsString()
-  @IsMongoId()
-  @IsOptional()
-  location?: string;
-
-  @IsString()
-  @IsOptional()
-  address?: string;
-
-  @IsArray()
-  @Type(() => AddCityDTO)
-  @ValidateNested({ each: true })
-  @ArrayNotEmpty()
-  city?: AddCityDTO[];
-
-  @IsArray()
-  @Type(() => AddLocalAreaDTO)
-  @ValidateNested({ each: true })
-  @ArrayNotEmpty()
-  local?: AddLocalAreaDTO[];
-
-  @IsBoolean()
-  @IsOptional()
-  autoRenewal?: boolean;
-
-  //@IsDate()
-  @IsOptional()
-  renewalDate?: Date;
-
-  @IsString()
-  @IsEnum(PROPERTY_LISTING_STATUS)
-  @IsOptional()
-  status?: string;
-
   @IsNumber()
+  @Min(0.01)
   @IsOptional()
-  bedrooms?: number;
+  totalAreaInSquareFeet?: number;
 
+  @IsOptional()
   @IsNumber()
-  @IsOptional()
-  parkingSlots?: number;
+  pricePerSquareFeet?: number;
 
-  @IsBoolean()
   @IsOptional()
-  isFurnished?: boolean;
-
   @IsNumber()
-  @IsOptional()
-  washrooms?: number;
-
-  @IsString()
-  @IsOptional()
-  balcony?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_OWNERSHIP_STATUS)
-  @IsOptional()
-  ownershipStatus?: string;
-
-  //@IsDate()
-  @IsOptional()
-  expiryDate?: Date;
-
-  @IsNumber()
-  @IsOptional()
-  propertyListingPrice?: number;
-
-  @IsString()
-  @IsOptional()
-  currency?: string;
-
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => AmenitiesDTO) // Validate the array of amenities
-  @IsUniqueSlug({ message: 'Duplicate slug values are not allowed' })
-  amenities: AmenitiesDTO[];
-
-  @IsString()
-  @IsOptional()
-  developerId?: string; // Or ObjectId if applicable
-
-  @IsString()
-  @IsOptional()
-  projectId?: string; // Or ObjectId if applicable
-
-  //@IsDate()
-  @IsOptional()
-  handoverDate?: Date;
-
-  @IsString()
-  @IsOptional()
-  @IsEnum(PAYMENT_OPTIONS)
-  paymentOptions?: string;
-
-  @IsOptional()
-  @IsObject()
-  @Type(() => PaymentPlanDTO)
-  @ValidateNested()
-  paymentPlan?: PaymentPlanDTO;
-
-  @IsOptional()
-  @IsObject()
-  @Type(() => ProjectTimelineDTO)
-  @ValidateNested()
-  projectTimeline?: ProjectTimelineDTO;
-
-  //@IsDate()
-  @IsOptional()
-  listedTimeStamp?: Date;
-
-  //@IsDate()
-  @IsOptional()
-  createdAt?: Date;
-
-  //@IsDate()
-  @IsOptional()
-  updatedAt?: Date;
-
-  //@IsDate()
-  @IsOptional()
-  deletedAt?: Date;
-
-  @IsOptional()
-  squareFeet?: SquareFeet;
-
-  @IsNumber()
-  @IsOptional()
   serviceCharge?: number;
 
-  @IsString()
-  @IsEnum(PROPERTY_PAID_BY)
   @IsOptional()
-  paidBy?: string;
-
-  @IsString()
-  @IsOptional()
-  rentalId?: string;
-
-  @IsString()
-  @IsOptional()
-  listingOwner?: string; // Or ObjectId if applicable
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  reviewStatus?: string;
-
-  @IsArray()
-  @IsOptional()
-  propertyDocuments?: string[]; // Or ObjectId[] if applicable
-
-  @IsArray()
-  @IsOptional()
-  floorPlans?: string[];
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  occupancyOption?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  residenceType?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  availabilityStatus?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  constructionStatus?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  verificationService?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  offplanSaleType?: string;
-
-  @IsString()
-  @IsEnum(PROPERTY_REVIEW_STATUS)
-  @IsOptional()
-  tenancyWayOfPayments?: string;
-
-  @IsOptional()
-  @IsObject()
-  @Type(() => BuildingDTO)
-  @ValidateNested()
-  buildingData?: BuildingDTO;
-
   locationMetaData?: any;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   placeId?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsString()
+  @IsEnum(PROPERTY_AVAILABILITY_STATUS)
+  @IsOptional()
+  availability?: PROPERTY_AVAILABILITY_STATUS;
+
+  @IsString()
+  @IsOptional()
+  unavailabliltyReason?: string;
+
+  @IsDate()
+  @IsOptional()
+  availableDate?: Date;
+
+  @IsString()
+  @IsOptional()
+  @IsEnum(PROPERTY_AVAILABILITY_STATUS)
+  publishStatus?: PROPERTY_PUBLISH_STATUS;
+
+  // publishedAt: Date;
+
+  @IsOptional()
+  @IsNumber()
+  bedrooms?: number;
+
+  @IsOptional()
+  @IsNumber()
+  parkingSlots?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isFurnished?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  washrooms?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  hasBalcony?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  hasAttachedBathroom: boolean;
+
+  @IsArray()
+  @Type(() => AmenitiesSchemaDTO)
+  @ValidateNested({ each: true })
+  @IsOptional()
+  amenities?: AmenitiesSchemaDTO[];
+
+  @IsNumber()
+  @Min(0.01)
+  @IsOptional()
+  price?: number;
+
+  @IsOptional()
+  @IsString()
+  currency?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @IsEnum(PROPERTY_TENANCY_WAY_OF_PAYMENT, { each: true })
+  tenancyWayOfPayments?: PROPERTY_TENANCY_WAY_OF_PAYMENT[];
+
+  @IsOptional()
+  @IsString()
+  @IsMongoId()
+  developer?: string;
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => PaymentPlanDTO)
+  @ValidateNested({ each: true })
+  paymentPlan?: PaymentPlanDTO[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsEnum(PAYMENT_OPTIONS, { each: true })
+  paymentOptions?: PAYMENT_OPTIONS[];
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => ProjectTimelineDTO)
+  @ValidateNested({ each: true })
+  projectTimeline?: ProjectTimelineDTO[];
+
+  @IsOptional()
+  @IsDate()
+  handoverDate?: Date;
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(PROPERTY_PERMIT_TYPE)
+  permitType?: PROPERTY_PERMIT_TYPE;
+
+  @IsOptional()
+  @IsNumber()
+  permitNumber?: number;
+
+  @IsOptional()
+  @IsObject()
+  @Type(() => PropertyDocument)
+  @ValidateNested()
+  media?: PropertyDocument;
+
+  @IsArray()
+  @IsOptional()
+  @IsMongoId({ each: true })
+  licenseType?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  legaldocuments?: string[];
+
+  @IsObject()
+  @Type(() => FloorPlansImagesDTO)
+  @ValidateNested()
+  floorPlans?: FloorPlansImagesDTO;
+
+  @IsOptional()
+  @IsEnum(PROPERTY_PAID_BY)
+  @IsString()
+  paidBy?: string;
 }

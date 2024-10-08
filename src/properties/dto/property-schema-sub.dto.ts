@@ -13,6 +13,7 @@ import {
   IsBoolean,
   ValidateNested,
   IsDate,
+  IsUrl,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -213,21 +214,82 @@ export class RentalsSchemaDTO {
   @IsEnum(PROPERTY_OCCUPANCY_OPTION)
   occupancyOption?: string;
 }
+class AmenitiesOptionsDTO {
+  @IsOptional()
+  @IsString()
+  code: string;
 
-// export class AmenitiesSchemaDTO {
-//   @IsOptional()
-//   @IsString()
-//   title?: string;
+  @IsOptional()
+  @IsString()
+  name: string;
 
-//   @IsOptional()
-//   @IsString()
-//   code?: string;
+  @IsOptional()
+  @IsString()
+  component: string;
 
-//   @IsOptional()
-//   @IsBoolean()
-//   display?: boolean;
+  @IsOptional()
+  type: any;
 
-//   @IsOptional()
-//   @IsArray()
-//   options?: AmenitiesOptions[];
-// }
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  options: string[];
+
+  @IsOptional()
+  value: any;
+
+  @IsOptional()
+  @IsBoolean()
+  multipleSelection: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  display: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  required: boolean;
+}
+export class AmenitiesSchemaDTO {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  code?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  display?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  options?: AmenitiesOptionsDTO[];
+}
+
+export class FloorPlansImagesDTO {
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  image2ds: string[];
+
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  image3ds: string[];
+
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  videos: string[];
+
+  @IsArray()
+  @ArrayNotEmpty({ message: 'URL should not be empty' })
+  @IsString({ each: true })
+  @IsUrl({}, { each: true })
+  others: string[];
+}
