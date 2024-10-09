@@ -1,8 +1,13 @@
+export const CLIENTS_MODULE_KAFKA_NAME_PROPERTY = {
+  UPLOADS_SERVICE: 'UPLOADS_SERVICE',
+};
+
 export const KAFKA_CONSUMER_GROUP_ID = {
   properties_consumer: 'properties-consumer',
   projects_consumer: 'projects-consumer',
   developers_consumer: 'developers-consumer',
   locations_consumer: 'locations-consumer',
+  uploads_consumer: 'uploads-consumer',
 };
 
 export const KAFKA_OPTIONS_CLIENT_ID = {
@@ -10,6 +15,7 @@ export const KAFKA_OPTIONS_CLIENT_ID = {
   projects_service: 'projects-service',
   developers_service: 'developers-service',
   locations_service: 'locations-service',
+  uploads_service: 'uploads-service',
 };
 
 export const KAFKA_PROPERTIES_TOPIC = {
