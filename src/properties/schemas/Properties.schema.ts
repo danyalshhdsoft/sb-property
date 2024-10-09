@@ -143,7 +143,7 @@ export class Properties extends Document {
   referenceNo: string;
 
   //not from client-side
-  //but to fetch from locationMetaData and save 
+  //but to fetch from locationMetaData and save
   //and add the building primary id got from callback of addNewLocation
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Buildings.name })
   building: mongoose.Schema.Types.ObjectId; //keep building
@@ -346,6 +346,7 @@ export class Properties extends Document {
 
   //documents, propertyimage, video, 360 image needs a field decided
   @Prop({
+    type: Object,
     default: () => ({}),
   })
   media: PropertyDocument; //Don't forget to save document meta-data in Document schema

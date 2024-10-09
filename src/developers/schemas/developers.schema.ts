@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Documents } from '@/src/common/schemas/documents.schema';
+import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Developers extends Document {
   @Prop({
@@ -25,10 +24,10 @@ export class Developers extends Document {
   })
   shortDescription: string;
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Documents.name }],
+    type: [String],
     default: [],
   })
-  documents: mongoose.Schema.Types.ObjectId[];
+  documents: string[];
   @Prop({
     type: Date,
     default: null,

@@ -35,17 +35,18 @@ export class PropertiesService {
 
   async updateRentalsData(oRentalData: Partial<RentalsSchemaDTO>, id: string) {
     try {
-      const oExistingRentals = await this.PropertiesModel.findOne({
+      const oExistingRentals = await this.RentalsModel.findOne({
         _id: id,
         deletedAt: { $eq: null },
       }).lean();
 
       if (!oExistingRentals) {
-        //add new rentals (const oAddRental) and send the response
-        // if (!oAddRental) {
-        //   throw new NotFoundException(`Rentals with ID ${id} not found`);
-        // }
-        //return oAddRental._id
+        // add new rentals (const oAddRental) and send the response
+        const oAddRentals = await this.RentalsModel.create(oRentalData);
+        if (!oAddRentals) {
+          throw new NotFoundException(`Rentals with ID ${id} not found`);
+        }
+        return oAddRentals._id;
       }
       const oUpdateRentals = await this.PropertiesModel.findByIdAndUpdate(
         id,
@@ -171,6 +172,21 @@ export class PropertiesService {
       propertyRequests['rental'] = oUpdatedRentalId;
 
       //updation of squarefeet data is pending in this API
+      if (
+        propertyRequests.totalAreaInSquareFeet &&
+        propertyRequests.totalAreaInSquareFeet !== null &&
+        !Number.isNaN(propertyRequests.totalAreaInSquareFeet)
+      ) {
+        const totalAreaInSquareFeet = propertyRequests.totalAreaInSquareFeet;
+        const areaInSquareMeters = totalAreaInSquareFeet * 0.092903;
+        const areaInSquareYards = totalAreaInSquareFeet * 0.111111;
+        propertyRequests['squareFeet'] = {
+          areaInSquareMeters: areaInSquareMeters,
+          areaInSquareYards: areaInSquareYards,
+          totalAreaInSquareFeet: totalAreaInSquareFeet,
+          pricePerSquareFeet: propertyRequests.pricePerSquareFeet,
+        };
+      }
       const oUpdateProperty = await this.PropertiesModel.findByIdAndUpdate(
         id,
         { $set: propertyRequests },

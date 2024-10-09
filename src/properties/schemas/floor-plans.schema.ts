@@ -24,6 +24,7 @@ export class FloorPlans extends Document {
 
   //does each image(image2d, image3d etc..) need a description and title with it?
   @Prop({
+    type: Object,
     default: () => ({}),
   })
   images: PropertyFloorPlanImages; //Don't forget to save document meta-data in Document schema

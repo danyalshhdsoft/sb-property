@@ -27,6 +27,7 @@ export class PropertyLicenses extends Document {
   })
   description: string;
   @Prop({
+    type: Object,
     default: {},
   })
   criteria: LicenseCriteria;
