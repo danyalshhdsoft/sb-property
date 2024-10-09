@@ -2,16 +2,34 @@
 [
   {
     id: '1',
-    value: true,
+    Option: [
+      {
+        _id: 'OptionId',
+        // 'Option Added or updated value'
+        value: false,
+      },
+    ],
   },
   {
     id: '2',
-    value: 2025, // number || string
+    Option: [
+      {
+        _id: 'OptionId',
+        // 'Option Added or updated value'
+        value: 2025,
+      },
+    ], // number || string
   },
 
   {
     id: '3',
-    value: ['Monthly', 'Quarterly'],
+    Option: [
+      {
+        _id: 'OptionId',
+        // 'Option Added or updated value'
+        value: ['Quarterly'],
+      },
+    ],
   },
 ];
 
