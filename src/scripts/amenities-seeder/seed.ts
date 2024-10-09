@@ -1,4 +1,4 @@
-import { Amenities } from '@/src/common/schemas/amenities.schema';
+import { Amenities } from '@/src/amenities/schemas/amenities.schema';
 import { INestApplicationContext } from '@nestjs/common';
 import { Model } from 'mongoose';
 

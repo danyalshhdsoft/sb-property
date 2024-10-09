@@ -1,6 +1,6 @@
 import { IsNumber, IsString, ValidateNested, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsUniqueSlug } from './validator/is-unique-slug.validator';
+import { IsUniqueSlug } from '../../common/dto/validator/is-unique-slug.validator';
 
 export class HealthAndFitnessFeaturesAttributesDTO {
   @IsBoolean()

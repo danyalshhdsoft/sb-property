@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Properties, PropertiesSchema } from './schemas/Properties.schema';
 import { LocationsModule } from '../locations/location.module';
 import { Rentals, RentalsSchema } from './schemas/rentals.schema';
-import { Amenities, AmenitiesSchema } from '../common/schemas/amenities.schema';
+import { Amenities, AmenitiesSchema } from '../amenities/schemas/amenities.schema';
 
 @Module({
   imports: [

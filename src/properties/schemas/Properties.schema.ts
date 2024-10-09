@@ -36,7 +36,7 @@ import {
 import {
   Amenities,
   AmenitiesSchema,
-} from '@/src/common/schemas/amenities.schema';
+} from '@/src/amenities/schemas/amenities.schema';
 import { PropertyLicenses } from './property-license.schema';
 
 @Schema({ timestamps: true })

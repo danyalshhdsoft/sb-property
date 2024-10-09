@@ -17,7 +17,7 @@ import {
   PROJECT_STATUS,
 } from '../enums/projects.enum';
 import { Type } from 'class-transformer';
-import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
+import { AmenitiesDTO } from '@/src/amenities/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
 import { BuildingDTO } from '@/src/properties/dto/property-schema-sub.dto';
 

@@ -11,7 +11,7 @@ import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
 import { RentalsSchemaDTO } from './dto/property-schema-sub.dto';
 import { Rentals } from './schemas/rentals.schema';
-import { Amenities } from '../common/schemas/amenities.schema';
+import { Amenities } from '../amenities/schemas/amenities.schema';
 @Injectable()
 export class PropertiesService {
   constructor(

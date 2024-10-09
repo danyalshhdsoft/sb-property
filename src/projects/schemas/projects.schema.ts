@@ -7,7 +7,7 @@ import {
 import { Locations } from '@/src/locations/schemas/location.schema';
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import { Developers } from '@/src/developers/schemas/developers.schema';
-import { Amenities } from '@/src/common/interfaces/amenities.interface';
+import { Amenities } from '@/src/amenities/interface/amenities.interface';
 import { Buildings } from '@/src/common/schemas/buildings.schema';
 
 @Schema({ timestamps: true })

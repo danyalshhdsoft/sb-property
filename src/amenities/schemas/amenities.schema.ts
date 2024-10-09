@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { AmenitiesOptions } from '../interfaces/amenities-options.interface';
+import { AmenitiesOptions } from '../interface/amenities-options.interface';
 @Schema({ timestamps: true })
 export class Amenities extends Document {
   @Prop({

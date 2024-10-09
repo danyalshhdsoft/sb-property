@@ -19,7 +19,7 @@ import { Type } from 'class-transformer';
 
 import { STATUS } from '@/src/common/enums/global.enum';
 import { CATEGORY, SUB_CATEGORY } from '../../common/enums/category.enum';
-import { AmenitiesDTO } from '@/src/common/dto/amenities.dto';
+import { AmenitiesDTO } from '@/src/amenities/dto/amenities.dto';
 import { IsUniqueSlug } from '@/src/common/dto/validator/is-unique-slug.validator';
 import {
   PROPERTY_OCCUPANCY_OPTION,
