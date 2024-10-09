@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface PaymentPlan {
   title?: string;
   percentage?: number;
@@ -40,4 +42,9 @@ export interface PropertyFloorPlanImages {
 export interface LicenseCriteria {
   title: string;
   isActive: boolean;
+}
+
+export interface LegalDocuments {
+  propertyLicense: Types.ObjectId;
+  documentUrl: string;
 }

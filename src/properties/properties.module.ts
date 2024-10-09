@@ -9,6 +9,7 @@ import {
   Amenities,
   AmenitiesSchema,
 } from '../amenities/schemas/amenities.schema';
+import { FloorPlans, FloorPlansSchema } from './schemas/floor-plans.schema';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import {
       { name: Properties.name, schema: PropertiesSchema },
       { name: Rentals.name, schema: RentalsSchema },
       { name: Amenities.name, schema: AmenitiesSchema },
+      { name: FloorPlans.name, schema: FloorPlansSchema },
     ]),
     LocationsModule,
   ],

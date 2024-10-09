@@ -55,6 +55,18 @@ class PropertyDocument {
   videoLinksUrl: string[];
 }
 
+class LegalDocuments {
+  @IsMongoId()
+  @IsString()
+  @IsNotEmpty()
+  propertyLicense: string;
+
+  @IsString()
+  @IsUrl({}, { message: 'Given URL is not valid' })
+  @IsNotEmpty()
+  documentUrl: string;
+}
+
 class PaymentPlanDTO {
   @IsOptional()
   @IsString()
@@ -294,11 +306,11 @@ export class CreatePropertyDto {
   @IsMongoId({ each: true })
   licenseType?: string[];
 
-  @IsOptional()
   @IsArray()
+  @ArrayNotEmpty()
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  legaldocuments?: string[];
+  legaldocuments: LegalDocuments[];
 
   @IsObject()
   @Type(() => FloorPlansImagesDTO)

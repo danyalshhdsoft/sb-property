@@ -9,7 +9,7 @@ import { PropertyFloorPlanImages } from '../interface/property-schema.interface'
 @Schema({ timestamps: true })
 export class FloorPlans extends Document {
   @Prop({
-    required: true,
+    default: STATUS.PENDING,
     type: String,
     enum: STATUS,
   })
@@ -30,7 +30,6 @@ export class FloorPlans extends Document {
   images: PropertyFloorPlanImages; //Don't forget to save document meta-data in Document schema
 
   @Prop({
-    required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: Locations.name,
     default: null,
@@ -45,7 +44,6 @@ export class FloorPlans extends Document {
   propertyId: mongoose.Schema.Types.ObjectId; //AgentId
 
   @Prop({
-    required: true,
     type: String,
     enum: FLOOR_PLAN_STATE,
     default: FLOOR_PLAN_STATE.AVAILABLE,

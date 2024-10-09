@@ -31,13 +31,13 @@ export class Locations extends Document {
   placeId: string;
 
   @Prop({
-    type: [CitiesSchema],
+    type: CitiesSchema,
   })
-  city: Cities[]; //Should be an Id or subdocument
+  city: Cities; //Should be an Id or subdocument
   @Prop({
-    type: [LocalsSchema],
+    type: LocalsSchema,
   })
-  local: Locals[]; //Should be an Id or subdocument
+  local: Locals; //Should be an Id or subdocument
 
   @Prop({ type: mongoose.Schema.Types.Mixed })
   metadata: any; //Data from MapBox or any response from Map Api integrated

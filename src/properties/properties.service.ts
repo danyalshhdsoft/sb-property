@@ -9,9 +9,13 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PROPERTY_REVIEW_STATUS } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
-import { RentalsSchemaDTO } from './dto/property-schema-sub.dto';
+import {
+  FloorPlansImagesDTO,
+  RentalsSchemaDTO,
+} from './dto/property-schema-sub.dto';
 import { Rentals } from './schemas/rentals.schema';
 import { Amenities } from '../amenities/schemas/amenities.schema';
+import { FloorPlans } from './schemas/floor-plans.schema';
 @Injectable()
 export class PropertiesService {
   constructor(
@@ -22,11 +26,37 @@ export class PropertiesService {
     private RentalsModel: Model<Rentals>,
     @InjectModel(Amenities.name)
     private AmenitiesModel: Model<Amenities>,
+    @InjectModel(FloorPlans.name)
+    private FloorPlansModel: Model<FloorPlans>,
   ) {}
 
   async addNewRentalsData(oRentalData: RentalsSchemaDTO) {
     try {
       const response = await this.RentalsModel.create(oRentalData);
+      return response;
+    } catch (oError) {
+      throw oError;
+    }
+  }
+
+  async addNewFloorPlanData(
+    oFloorPlans: FloorPlansImagesDTO,
+    locationId: string,
+    bedroomCount: number,
+    washroomCount: number,
+  ) {
+    try {
+      oFloorPlans['addedBy'] = '60d5ec49f9e7a3c1d4f0b8ca';
+      oFloorPlans['images'] = {
+        image2ds: oFloorPlans.image2ds,
+        image3ds: oFloorPlans.image3ds,
+        videos: oFloorPlans.videos,
+        others: oFloorPlans.others,
+      };
+      oFloorPlans['location'] = locationId;
+      oFloorPlans['bedroomCount'] = bedroomCount;
+      oFloorPlans['washroomCount'] = washroomCount;
+      const response = await this.FloorPlansModel.create(oFloorPlans);
       return response;
     } catch (oError) {
       throw oError;
@@ -59,10 +89,11 @@ export class PropertiesService {
       );
       console.log(oAddLocationData);
       oPropertyRequests['location'] = oAddLocationData?.locationId.toString();
-      oPropertyRequests['city'] = oAddLocationData.aCities;
-      oPropertyRequests['local'] = oAddLocationData.aLocals;
-      oPropertyRequests['buildingData'].location =
-        oAddLocationData?.locationId.toString();
+      oPropertyRequests['city'] = oAddLocationData?.cities?._id;
+      oPropertyRequests['local'] = oAddLocationData?.oLocals?._id;
+      //need to do something with building data schema and the id storing in properties schema
+      // oPropertyRequests['buildingData'].location =
+      //   oAddLocationData?.locationId.toString();
       const oRentals = await this.addNewRentalsData(oPropertyRequests.rentals);
       oPropertyRequests['rental'] = oRentals._id;
 
@@ -75,9 +106,15 @@ export class PropertiesService {
         totalAreaInSquareFeet: totalAreaInSquareFeet,
         pricePerSquareFeet: oPropertyRequests.pricePerSquareFeet,
       };
+      const oFloorPlans = await this.addNewFloorPlanData(
+        propertyRequests.floorPlans,
+        oAddLocationData?.locationId.toString(),
+        oPropertyRequests.bedrooms,
+        oPropertyRequests.washrooms,
+      );
+      oPropertyRequests['floorPlan'] = oFloorPlans._id;
       //check for building embedded document field in schema to save
       const newProperty = await this.PropertiesModel.create(oPropertyRequests);
-
       return {
         status: 200,
         data: newProperty,
@@ -159,8 +196,8 @@ export class PropertiesService {
           'properties',
         );
         propertyRequests['location'] = oAddLocationData?.locationId.toString();
-        propertyRequests['city'] = oAddLocationData.aCities;
-        propertyRequests['local'] = oAddLocationData.aLocals;
+        propertyRequests['city'] = oAddLocationData?.cities?._id;
+        propertyRequests['local'] = oAddLocationData?.oLocals?._id;
         propertyRequests['buildingData'].location =
           oAddLocationData?.locationId.toString();
       }

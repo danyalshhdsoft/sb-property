@@ -504,15 +504,14 @@ export class LocationsService {
         normalizedData.coordinates,
       );
       const cities = await this.addNewCity(normalizedData.cityDTOStructureData);
-      normalizedData['city'] = cities;
+      normalizedData.localDTOStructureData['city'] = cities;
       const oLocals = await this.addNewLocal(
         normalizedData.localDTOStructureData,
       );
       normalizedData.locationDTOStructureData['placeId'] = placeId;
-      const aCities = [cities];
-      const aLocals = [oLocals];
-      normalizedData.locationDTOStructureData['city'] = aCities;
-      normalizedData.locationDTOStructureData['local'] = aLocals;
+
+      normalizedData.locationDTOStructureData['city'] = cities;
+      normalizedData.locationDTOStructureData['local'] = oLocals;
       normalizedData.locationDTOStructureData['coordinates'] = oCoordinates;
 
       const newLocation = await this.LocationsModel.create(
@@ -520,8 +519,8 @@ export class LocationsService {
       );
       return {
         locationId: newLocation._id,
-        aCities,
-        aLocals,
+        cities,
+        oLocals,
       };
     } catch (oError) {
       throw new HttpException(oError, HttpStatus.FORBIDDEN);

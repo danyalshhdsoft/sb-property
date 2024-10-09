@@ -38,18 +38,6 @@ export class Buildings extends Document {
     default: null,
   })
   createdBy: mongoose.Schema.Types.ObjectId; //agent or adminId
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Properties',
-    default: null,
-  })
-  property: mongoose.Schema.Types.ObjectId; //propertyId this building is added for
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Projects',
-    default: null,
-  })
-  projectProperties: mongoose.Schema.Types.ObjectId[]; //propertyId's in project for which this building is added for
 
   @Prop({ default: null, type: Date })
   deletedAt: Date;

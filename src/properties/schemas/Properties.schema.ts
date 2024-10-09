@@ -28,6 +28,7 @@ import { Cities } from '@/src/locations/schemas/city.schema';
 import { Locals } from '@/src/locations/schemas/locals.schema';
 import { PropertyType } from '@/src/common/schemas/property-type.schema';
 import {
+  LegalDocuments,
   PaymentPlan,
   ProjectTimeline,
   PropertyDocument,
@@ -184,7 +185,6 @@ export class Properties extends Document {
   address: string;
 
   @Prop({
-    required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: Cities.name,
     default: null,
@@ -192,12 +192,11 @@ export class Properties extends Document {
   city: mongoose.Schema.Types.ObjectId;
 
   @Prop({
-    required: true,
     type: mongoose.Schema.Types.ObjectId,
     ref: Locals.name,
     default: null,
   })
-  locals: mongoose.Schema.Types.ObjectId[];
+  locals: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: String,
@@ -278,7 +277,7 @@ export class Properties extends Document {
   })
   hasAttachedBathroom: boolean;
 
-  @Prop({ type: AmenitiesSchema, default: [] })
+  @Prop({ type: [AmenitiesSchema], default: [] })
   amenities: Amenities[];
 
   @Prop({
@@ -360,21 +359,17 @@ export class Properties extends Document {
 
   //working on the structure and flow
   @Prop({
-    type: [String],
+    type: Array,
     default: [],
   })
-  legaldocuments: string[];
+  legaldocuments: LegalDocuments[];
 
   @Prop({
-    type: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: FloorPlans.name,
-        default: null,
-      },
-    ],
+    type: mongoose.Schema.Types.ObjectId,
+    ref: FloorPlans.name,
+    default: null,
   })
-  floorPlans: mongoose.Schema.Types.ObjectId[]; //AgentId
+  floorPlan: mongoose.Schema.Types.ObjectId; //AgentId
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
