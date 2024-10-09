@@ -33,35 +33,6 @@ export class PropertiesService {
     }
   }
 
-  async updateRentalsData(oRentalData: Partial<RentalsSchemaDTO>, id: string) {
-    try {
-      const oExistingRentals = await this.RentalsModel.findOne({
-        _id: id,
-        deletedAt: { $eq: null },
-      }).lean();
-
-      if (!oExistingRentals) {
-        // add new rentals (const oAddRental) and send the response
-        const oAddRentals = await this.RentalsModel.create(oRentalData);
-        if (!oAddRentals) {
-          throw new NotFoundException(`Rentals with ID ${id} not found`);
-        }
-        return oAddRentals._id;
-      }
-      const oUpdateRentals = await this.PropertiesModel.findByIdAndUpdate(
-        id,
-        { $set: oRentalData },
-        { new: true },
-      );
-      if (!oUpdateRentals) {
-        throw new NotFoundException(`Rentals with ID ${id} not found`);
-      }
-      return oUpdateRentals._id;
-    } catch (oError) {
-      throw oError;
-    }
-  }
-
   async addNewPropertyByAdmin(propertyRequests: CreatePropertyDto) {
     try {
       const oPropertyRequests = { ...propertyRequests };
@@ -114,6 +85,35 @@ export class PropertiesService {
       };
     } catch (oError) {
       throw new RpcException(oError);
+    }
+  }
+
+  async updateRentalsData(oRentalData: Partial<RentalsSchemaDTO>, id: string) {
+    try {
+      const oExistingRentals = await this.RentalsModel.findOne({
+        _id: id,
+        deletedAt: { $eq: null },
+      }).lean();
+
+      if (!oExistingRentals) {
+        // add new rentals (const oAddRental) and send the response
+        const oAddRentals = await this.RentalsModel.create(oRentalData);
+        if (!oAddRentals) {
+          throw new NotFoundException(`Rentals with ID ${id} not found`);
+        }
+        return oAddRentals._id;
+      }
+      const oUpdateRentals = await this.PropertiesModel.findByIdAndUpdate(
+        id,
+        { $set: oRentalData },
+        { new: true },
+      );
+      if (!oUpdateRentals) {
+        throw new NotFoundException(`Rentals with ID ${id} not found`);
+      }
+      return oUpdateRentals._id;
+    } catch (oError) {
+      throw oError;
     }
   }
 

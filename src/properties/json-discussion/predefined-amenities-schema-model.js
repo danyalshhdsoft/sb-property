@@ -16,7 +16,7 @@
     title: 'Health and Fitness',
     code: 'sb-health-and-fitness',
     display: true,
-    Option: [
+    options: [
       {
         _id: '',
         code: 'first',
@@ -59,7 +59,7 @@
     title: 'Building',
     display: true,
     code: 'sb-building',
-    Option: [
+    options: [
       {
         _id: '',
         code: '',
@@ -78,7 +78,7 @@
     title: 'Miscellaneous',
     display: true,
     code: 'sb-miscellaneous',
-    Option: [
+    options: [
       {
         _id: '',
         code: '',

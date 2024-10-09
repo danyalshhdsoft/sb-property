@@ -2,7 +2,7 @@
 [
   {
     id: '1',
-    Option: [
+    options: [
       {
         _id: 'OptionId',
         // 'Option Added or updated value'
@@ -12,7 +12,7 @@
   },
   {
     id: '2',
-    Option: [
+    options: [
       {
         _id: 'OptionId',
         // 'Option Added or updated value'
@@ -23,7 +23,7 @@
 
   {
     id: '3',
-    Option: [
+    options: [
       {
         _id: 'OptionId',
         // 'Option Added or updated value'
@@ -49,7 +49,7 @@
     title: 'Health and Fitness',
     code: 'sb-health-and-fitness',
     display: true,
-    Option: [
+    options: [
       {
         _id: '',
         code: 'first',
@@ -80,7 +80,7 @@
     title: 'Building',
     display: true,
     code: 'sb-building',
-    Option: [
+    options: [
       {
         _id: '',
         code: '',
@@ -111,7 +111,7 @@
     title: 'Miscellaneous',
     display: true,
     code: 'sb-miscellaneous',
-    Option: [
+    options: [
       {
         _id: '',
         code: '',
@@ -130,7 +130,7 @@
     title: 'Events & Parties',
     display: true,
     code: 'sb-events-and-parties',
-    Option: [
+    options: [
       {
         _id: '',
         code: '',
