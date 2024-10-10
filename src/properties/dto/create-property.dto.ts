@@ -31,7 +31,7 @@ import {
 import { PAYMENT_OPTIONS } from '@/src/common/enums/global.enum';
 import {
   AmenitiesSchemaDTO,
-  FloorPlansImagesDTO,
+  // FloorPlansImagesDTO,
   RentalsSchemaDTO,
 } from './property-schema-sub.dto';
 
@@ -55,17 +55,17 @@ class PropertyDocument {
   videoLinksUrl: string[];
 }
 
-class LegalDocuments {
-  @IsMongoId()
-  @IsString()
-  @IsNotEmpty()
-  propertyLicense: string;
+// class LegalDocuments {
+//   @IsMongoId()
+//   @IsString()
+//   @IsNotEmpty()
+//   propertyLicense: string;
 
-  @IsString()
-  @IsUrl({}, { message: 'Given URL is not valid' })
-  @IsNotEmpty()
-  documentUrl: string;
-}
+//   @IsString()
+//   @IsUrl({}, { message: 'Given URL is not valid' })
+//   @IsNotEmpty()
+//   documentUrl: string;
+// }
 
 class PaymentPlanDTO {
   @IsOptional()
@@ -292,30 +292,33 @@ export class CreatePropertyDto {
   @IsEnum(PROPERTY_PERMIT_TYPE)
   permitType?: PROPERTY_PERMIT_TYPE;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsNumber()
-  permitNumber?: number;
+  permitNumber: number;
 
   @IsObject()
   @Type(() => PropertyDocument)
   @ValidateNested()
   media: PropertyDocument;
 
-  @IsArray()
-  @IsOptional()
-  @IsMongoId({ each: true })
-  licenseType?: string[];
+  // @IsArray()
+  // @IsOptional()
+  // @IsMongoId({ each: true })
+  // licenseType?: string[];
 
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  @IsUrl({}, { each: true })
-  legaldocuments: LegalDocuments[];
+  // @IsArray()
+  // @ArrayNotEmpty()
+  // @IsString({ each: true })
+  // @IsUrl({}, { each: true })
+  // legaldocuments: LegalDocuments[];
 
-  @IsObject()
-  @Type(() => FloorPlansImagesDTO)
-  @ValidateNested()
-  floorPlans?: FloorPlansImagesDTO;
+  //Needs a discussion to integrate floorplan.
+  //For now this is optional as the structure is not confirmed.
+  // @IsOptional()
+  // @IsObject()
+  // @Type(() => FloorPlansImagesDTO)
+  // @ValidateNested()
+  // floorPlans?: FloorPlansImagesDTO;
 
   @IsOptional()
   @IsEnum(PROPERTY_PAID_BY)

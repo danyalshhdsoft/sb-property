@@ -268,6 +268,8 @@ export class AmenitiesSchemaDTO {
   options?: AmenitiesOptionsDTO[];
 }
 
+//Needs a discussion to integrate floorplan.
+//For now this is optional as the structure is not confirmed.
 export class FloorPlansImagesDTO {
   @IsArray()
   @ArrayNotEmpty({ message: 'URL should not be empty' })

@@ -10,12 +10,13 @@ import { PROPERTY_REVIEW_STATUS } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
 import {
-  FloorPlansImagesDTO,
+  // FloorPlansImagesDTO,
   RentalsSchemaDTO,
 } from './dto/property-schema-sub.dto';
 import { Rentals } from './schemas/rentals.schema';
 import { Amenities } from '../amenities/schemas/amenities.schema';
 import { FloorPlans } from './schemas/floor-plans.schema';
+
 @Injectable()
 export class PropertiesService {
   constructor(
@@ -39,29 +40,32 @@ export class PropertiesService {
     }
   }
 
-  async addNewFloorPlanData(
-    oFloorPlans: FloorPlansImagesDTO,
-    locationId: string,
-    bedroomCount: number,
-    washroomCount: number,
-  ) {
-    try {
-      oFloorPlans['addedBy'] = '60d5ec49f9e7a3c1d4f0b8ca';
-      oFloorPlans['images'] = {
-        image2ds: oFloorPlans.image2ds,
-        image3ds: oFloorPlans.image3ds,
-        videos: oFloorPlans.videos,
-        others: oFloorPlans.others,
-      };
-      oFloorPlans['location'] = locationId;
-      oFloorPlans['bedroomCount'] = bedroomCount;
-      oFloorPlans['washroomCount'] = washroomCount;
-      const response = await this.FloorPlansModel.create(oFloorPlans);
-      return response;
-    } catch (oError) {
-      throw oError;
-    }
-  }
+  //Needs a discussion to integrate floorplan.
+  //For now this is optional as the structure is not confirmed.
+
+  // async addNewFloorPlanData(
+  //   oFloorPlans: FloorPlansImagesDTO,
+  //   locationId: string,
+  //   bedroomCount: number,
+  //   washroomCount: number,
+  // ) {
+  //   try {
+  //     oFloorPlans['addedBy'] = '60d5ec49f9e7a3c1d4f0b8ca';
+  //     oFloorPlans['images'] = {
+  //       image2ds: oFloorPlans.image2ds,
+  //       image3ds: oFloorPlans.image3ds,
+  //       videos: oFloorPlans.videos,
+  //       others: oFloorPlans.others,
+  //     };
+  //     oFloorPlans['location'] = locationId;
+  //     oFloorPlans['bedroomCount'] = bedroomCount;
+  //     oFloorPlans['washroomCount'] = washroomCount;
+  //     const response = await this.FloorPlansModel.create(oFloorPlans);
+  //     return response;
+  //   } catch (oError) {
+  //     throw oError;
+  //   }
+  // }
 
   async addNewPropertyByAdmin(propertyRequests: CreatePropertyDto) {
     try {
@@ -106,13 +110,18 @@ export class PropertiesService {
         totalAreaInSquareFeet: totalAreaInSquareFeet,
         pricePerSquareFeet: oPropertyRequests.pricePerSquareFeet,
       };
-      const oFloorPlans = await this.addNewFloorPlanData(
-        propertyRequests.floorPlans,
-        oAddLocationData?.locationId.toString(),
-        oPropertyRequests.bedrooms,
-        oPropertyRequests.washrooms,
-      );
-      oPropertyRequests['floorPlan'] = oFloorPlans._id;
+
+      //Needs a discussion to integrate floorplan.
+      //For now this is optional as the structure is not confirmed.
+
+      // const oFloorPlans = await this.addNewFloorPlanData(
+      //   propertyRequests.floorPlans,
+      //   oAddLocationData?.locationId.toString(),
+      //   oPropertyRequests.bedrooms,
+      //   oPropertyRequests.washrooms,
+      // );
+      // oPropertyRequests['floorPlan'] = oFloorPlans._id;
+
       //check for building embedded document field in schema to save
       const newProperty = await this.PropertiesModel.create(oPropertyRequests);
       return {

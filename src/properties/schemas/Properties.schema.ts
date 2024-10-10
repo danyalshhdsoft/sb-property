@@ -28,7 +28,7 @@ import { Cities } from '@/src/locations/schemas/city.schema';
 import { Locals } from '@/src/locations/schemas/locals.schema';
 import { PropertyType } from '@/src/common/schemas/property-type.schema';
 import {
-  LegalDocuments,
+  // LegalDocuments,
   PaymentPlan,
   ProjectTimeline,
   PropertyDocument,
@@ -38,7 +38,7 @@ import {
   Amenities,
   AmenitiesSchema,
 } from '@/src/amenities/schemas/amenities.schema';
-import { PropertyLicenses } from './property-license.schema';
+// import { PropertyLicenses } from './property-license.schema';
 
 @Schema({ timestamps: true })
 export class Properties extends Document {
@@ -349,21 +349,23 @@ export class Properties extends Document {
     default: () => ({}),
   })
   media: PropertyDocument; //Don't forget to save document meta-data in Document schema
-  @Prop({
-    type: [
-      { type: mongoose.Schema.Types.ObjectId, ref: PropertyLicenses.name },
-    ],
-    default: [],
-  })
-  licenseType: mongoose.Schema.Types.ObjectId[];
+  // @Prop({
+  //   type: [
+  //     { type: mongoose.Schema.Types.ObjectId, ref: PropertyLicenses.name },
+  //   ],
+  //   default: [],
+  // })
+  // licenseType: mongoose.Schema.Types.ObjectId[];
 
   //working on the structure and flow
-  @Prop({
-    type: Array,
-    default: [],
-  })
-  legaldocuments: LegalDocuments[];
+  // @Prop({
+  //   type: Array,
+  //   default: [],
+  // })
+  // legaldocuments: LegalDocuments[];
 
+  //Needs a discussion to integrate floorplan.
+  //For now this is optional as the structure is not confirmed.
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: FloorPlans.name,

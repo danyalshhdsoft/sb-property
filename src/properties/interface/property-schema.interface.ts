@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 export interface PaymentPlan {
   title?: string;
   percentage?: number;
@@ -32,6 +30,8 @@ export interface PropertyDocument {
   videoLinksUrl: string[];
 }
 
+//Needs a discussion to integrate floorplan.
+//For now this is optional as the structure is not confirmed.
 export interface PropertyFloorPlanImages {
   image2ds: string[];
   image3ds: string[];
@@ -44,7 +44,7 @@ export interface LicenseCriteria {
   isActive: boolean;
 }
 
-export interface LegalDocuments {
-  propertyLicense: Types.ObjectId;
-  documentUrl: string;
-}
+// export interface LegalDocuments {
+//   propertyLicense: Types.ObjectId;
+//   documentUrl: string;
+// }

@@ -8,12 +8,6 @@ import { ProjectsModule } from './projects/projects.module';
 import { LocationsModule } from './locations/location.module';
 import { PropertiesModule } from './properties/properties.module';
 import { CommonModule } from './common/common.module';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import {
-  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
-  KAFKA_CONSUMER_GROUP_ID,
-  KAFKA_OPTIONS_CLIENT_ID,
-} from './utils/constants/kafka-const';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
@@ -33,22 +27,6 @@ import {
         },
       }),
     }),
-    ClientsModule.register([
-      {
-        name: CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE,
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: KAFKA_OPTIONS_CLIENT_ID.uploads_service,
-            //brokers: ['host.docker.internal:9092'],
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: KAFKA_CONSUMER_GROUP_ID.uploads_consumer,
-          },
-        },
-      },
-    ]),
     CommonModule,
     DevelopersModule,
     ProjectsModule,

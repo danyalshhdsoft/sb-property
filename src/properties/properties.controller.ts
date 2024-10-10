@@ -1,13 +1,20 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject, OnModuleInit } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
-import { MessagePattern } from '@nestjs/microservices';
-import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
+import { ClientKafka, MessagePattern } from '@nestjs/microservices';
+import {
+  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
+  KAFKA_PROPERTIES_TOPIC,
+} from '../utils/constants/kafka-const';
 @Controller('properties')
 // @UseGuards(AuthGuard)
-export class PropertiesController {
-  constructor(private readonly propertiesService: PropertiesService) {}
+export class PropertiesController implements OnModuleInit {
+  constructor(
+    private readonly propertiesService: PropertiesService,
+    @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE)
+    private uploadsClient: ClientKafka,
+  ) {}
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
   async addNewPropertyByAdmin(data: any) {
@@ -75,4 +82,10 @@ export class PropertiesController {
   //   const result = await this.propertiesService.deletePropertyFromList(id);
   //   return new ApiResponse(result);
   // }
+
+  onModuleInit() {
+    this.uploadsClient.subscribeToResponseOf(
+      KAFKA_PROPERTIES_TOPIC.upload_files,
+    );
+  }
 }
