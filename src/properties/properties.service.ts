@@ -93,8 +93,8 @@ export class PropertiesService {
     oPropertyRequests
   ) {
     return {
-      washroom: oPropertyRequests.washroom,
-      bedroom: oPropertyRequests.bedroom,
+      washroom: oPropertyRequests.washrooms,
+      bedroom: oPropertyRequests.bedrooms,
       area: oPropertyRequests.local[0].metadata.vicinity,
       building: oPropertyRequests.local[0].metadata.name,
       price: oPropertyRequests.price,
@@ -285,16 +285,118 @@ export class PropertiesService {
     }
   }
 
-  async searchProducts(query: string): Promise<any> {
+  async searchProperties(
+    query: string,
+    bedroom: string,
+    washroom: string,
+    purpose: string,
+    status: string,
+    completionStatus: string,
+    propertyType: string,
+    minprice: string,
+    maxprice: string,
+    from: number, 
+    size: number
+  ): Promise<any> {
+    
     const searchQuery = {
-      query: {
-        multi_match: {
-          query,
-          fields: ['propertyListingTitle', 'description']
-        }
-      }
+      query: {bool: { must: [], filter: {} }}
     };
 
-    return await this.elasticsearchService.search('properties', searchQuery);
+    this._buildQuery(
+      searchQuery,
+      query,
+      bedroom,
+      washroom,
+      purpose,
+      status,
+      completionStatus,
+      propertyType,
+      minprice,
+      maxprice
+    );
+
+    return {
+      status: 200,
+      data: await this.elasticsearchService.search(searchQuery, from, size, 'properties')
+    };
+  }
+
+  _buildQuery(
+    searchQuery,
+    query,
+    bedroom,
+    washroom,
+    purpose,
+    status,
+    completionStatus,
+    propertyType,
+    minprice = "0",
+    maxprice = "5000000"
+  ) {
+    if (query) { 
+      searchQuery.query.bool.must.push({
+        multi_match: {
+          query, fields: ["area", "building"]
+        }
+      })
+    }
+
+    if (bedroom) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "bedrooms": bedroom
+        }
+      })
+    }
+
+    if (washroom) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "washrooms": washroom
+        }
+      })
+    }
+
+    if (purpose) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "purpose": purpose
+        }
+      })
+    }
+
+    if (status) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "status": status
+        }
+      })
+    }
+
+    if (propertyType) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "propertyType": propertyType
+        }
+      })
+    }
+
+    if (completionStatus) {
+      searchQuery.query.bool.must.push({
+        match: {
+          "completionStatus": completionStatus
+        }
+      })
+    }
+
+    searchQuery.query.bool.filter = {
+      range: {
+        "price": {
+          "gte": minprice,
+          "lte": maxprice
+        }
+      }
+    }
   }
 }
