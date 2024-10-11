@@ -24,7 +24,7 @@ export class Documents extends Document {
     required: true,
     type: String,
   })
-  documentFileType: string; //jpeg,mp4,pdf etc...
+  documentFileType: string; //jpeg,mp4,pdf etc... || "contentType": "image/png",
   @Prop({
     required: true,
     type: String,

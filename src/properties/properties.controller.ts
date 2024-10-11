@@ -18,7 +18,14 @@ export class PropertiesController implements OnModuleInit {
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
   async addNewPropertyByAdmin(data: any) {
-    return await this.propertiesService.addNewPropertyByAdmin(data);
+    const { oPropertyRequest } = data;
+    return await this.propertiesService.addNewPropertyByAdmin(oPropertyRequest);
+  }
+
+  @MessagePattern('test-uploads')
+  async testUploadFile(data: any) {
+    const { oPropertyRequest } = data;
+    return await this.propertiesService.testUploadFile(oPropertyRequest);
   }
 
   // @Post('add-properties')

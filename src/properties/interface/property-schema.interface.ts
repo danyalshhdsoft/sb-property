@@ -25,9 +25,9 @@ export interface TenantEligibility {
 }
 
 export interface PropertyDocument {
-  imageUrl: string[];
-  image360Url: string[];
-  videoLinksUrl: string[];
+  images: string[];
+  image360Tour: string[];
+  videos: string[];
 }
 
 //Needs a discussion to integrate floorplan.

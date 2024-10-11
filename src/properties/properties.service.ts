@@ -16,7 +16,8 @@ import {
 import { Rentals } from './schemas/rentals.schema';
 import { Amenities } from '../amenities/schemas/amenities.schema';
 import { FloorPlans } from './schemas/floor-plans.schema';
-
+import { BroadcastUploadsService } from './broadcast-uploads.service';
+import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
 @Injectable()
 export class PropertiesService {
   constructor(
@@ -29,6 +30,7 @@ export class PropertiesService {
     private AmenitiesModel: Model<Amenities>,
     @InjectModel(FloorPlans.name)
     private FloorPlansModel: Model<FloorPlans>,
+    private BroadcastService: BroadcastUploadsService,
   ) {}
 
   async addNewRentalsData(oRentalData: RentalsSchemaDTO) {
@@ -84,6 +86,15 @@ export class PropertiesService {
       ) {
         throw new RpcException('Location data fields are empty');
       }
+      //move this to sb-gateway. Let the upload opertation taken care there
+      //fetch the files data recieved from the gateway and prepare the object to save the url in images array
+      //and metadata to be saved in the document schema with propertyId na module: 'properties'
+      const uploads = await this.BroadcastService.BroadcastFileUpload(
+        oPropertyRequests?.media?.images,
+        KAFKA_PROPERTIES_TOPIC.upload_files,
+        'properties',
+      );
+      console.log(uploads);
       //save location data in locationschema
       const oAddLocationData = await this.LocationService.addNewLocation(
         oPropertyRequests?.locationMetaData,
@@ -315,6 +326,23 @@ export class PropertiesService {
           'Property is now on ' +
           oUpdateProperty?.reviewStatus?.toLowerCase() +
           ' status',
+      };
+    } catch (oError) {
+      throw new RpcException(oError);
+    }
+  }
+
+  async testUploadFile(oUploadData: Partial<UpdatePropertyDto>) {
+    try {
+      const uploads = await this.BroadcastService.BroadcastFileUpload(
+        oUploadData?.media?.images,
+        KAFKA_PROPERTIES_TOPIC.upload_files,
+        'properties',
+      );
+      return {
+        status: 200,
+        data: uploads,
+        message: 'Test is successfull',
       };
     } catch (oError) {
       throw new RpcException(oError);

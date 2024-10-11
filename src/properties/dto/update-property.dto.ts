@@ -38,19 +38,19 @@ class PropertyDocument {
   @IsArray()
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  imageUrl?: string[];
+  images?: string[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  image360Url?: string[];
+  image360Tour?: string[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  videoLinksUrl?: string[];
+  videos?: string[];
 }
 
 // class LegalDocuments {

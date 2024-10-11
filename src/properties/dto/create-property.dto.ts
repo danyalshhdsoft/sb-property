@@ -40,19 +40,19 @@ class PropertyDocument {
   @ArrayNotEmpty({ message: 'URL should not be empty' })
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  imageUrl: string[];
+  images: string[];
 
   @IsArray()
   @ArrayNotEmpty({ message: 'URL should not be empty' })
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  image360Url: string[];
+  image360Tour: string[];
 
   @IsArray()
   @ArrayNotEmpty({ message: 'URL should not be empty' })
   @IsString({ each: true })
   @IsUrl({}, { each: true })
-  videoLinksUrl: string[];
+  videos: string[];
 }
 
 // class LegalDocuments {
