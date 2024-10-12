@@ -90,7 +90,7 @@ export class PropertiesService {
         oPropertyRequests.title && oPropertyRequests.title !== ''
           ? oPropertyRequests.title.toLowerCase().replace(/\s+/g, '-')
           : '';
-      propertyRequests['slug'] = slug;
+      oPropertyRequests['slug'] = slug;
 
       if (
         (oPropertyRequests && oPropertyRequests.placeId === '') ||
@@ -186,6 +186,7 @@ export class PropertiesService {
   async updatePropertyByAdmin(
     id: string,
     propertyRequests: Partial<UpdatePropertyDto>,
+    imagesMeta: any,
   ) {
     try {
       const oExistingProperty = await this.PropertiesModel.findOne({
@@ -196,7 +197,8 @@ export class PropertiesService {
       if (!oExistingProperty) {
         throw new NotFoundException('Property not found');
       }
-
+      //when the client-side is not sending the title field the exisiting slug becomes empty
+      //CHECK AND FIX.
       const slug =
         propertyRequests.title && propertyRequests.title !== ''
           ? propertyRequests.title.toLowerCase().replace(/\s+/g, '-')
@@ -227,8 +229,9 @@ export class PropertiesService {
         propertyRequests['location'] = oAddLocationData?.locationId.toString();
         propertyRequests['city'] = oAddLocationData?.cities?._id;
         propertyRequests['local'] = oAddLocationData?.oLocals?._id;
-        propertyRequests['buildingData'].location =
-          oAddLocationData?.locationId.toString();
+        //need to do something with building data schema and the id storing in properties schema
+        // propertyRequests['buildingData'].location =
+        //   oAddLocationData?.locationId.toString();
       }
 
       const oUpdatedRentalId = await this.updateRentalsData(
@@ -237,7 +240,6 @@ export class PropertiesService {
       );
       propertyRequests['rental'] = oUpdatedRentalId;
 
-      //updation of squarefeet data is pending in this API
       if (
         propertyRequests.totalAreaInSquareFeet &&
         propertyRequests.totalAreaInSquareFeet !== null &&
@@ -253,6 +255,27 @@ export class PropertiesService {
           pricePerSquareFeet: propertyRequests.pricePerSquareFeet,
         };
       }
+
+      //UNTESTED LOGIC
+      // Push new images into the media.images array if provided
+      if (propertyRequests.newImages && propertyRequests.newImages.length > 0) {
+        await this.PropertiesModel.updateOne(
+          { _id: id },
+          { $push: { 'media.images': { $each: propertyRequests.newImages } } },
+        );
+      }
+
+      // Remove specific images from the media.images array if provided
+      if (
+        propertyRequests.removeImages &&
+        propertyRequests.removeImages.length > 0
+      ) {
+        await this.PropertiesModel.updateOne(
+          { _id: id },
+          { $pull: { 'media.images': { $in: propertyRequests.removeImages } } },
+        );
+      }
+
       const oUpdateProperty = await this.PropertiesModel.findByIdAndUpdate(
         id,
         { $set: propertyRequests },
@@ -260,6 +283,13 @@ export class PropertiesService {
       );
       if (!oUpdateProperty) {
         throw new NotFoundException(`Property with ID ${id} not found`);
+      }
+      //feels like some condition is missing for some situations on saving metadata.Check that
+      if (imagesMeta && imagesMeta.length > 0) {
+        const updateImageMeta = imagesMeta.map((obj) =>
+          Object.assign({}, obj, { propertyId: oUpdateProperty._id }),
+        );
+        await this.savePropertyDocumentsMetaData(updateImageMeta);
       }
       return {
         status: 200,

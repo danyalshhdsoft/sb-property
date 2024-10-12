@@ -313,6 +313,14 @@ export class UpdatePropertyDto {
   @ValidateNested()
   media?: PropertyDocument;
 
+  @IsOptional()
+  @IsArray()
+  newImages?: string[];
+
+  @IsOptional()
+  @IsArray()
+  removeImages?: string[];
+
   // @IsArray()
   // @IsOptional()
   // @IsMongoId({ each: true })

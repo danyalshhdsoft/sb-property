@@ -28,9 +28,11 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.update_properties)
   async updatePropertyByAdmin(data: any) {
+    const { id, oPropertyRequest, imagesMeta } = data;
     return await this.propertiesService.updatePropertyByAdmin(
-      data.id,
-      data.data,
+      id,
+      oPropertyRequest,
+      imagesMeta,
     );
   }
 
