@@ -10,7 +10,7 @@ import {
   AmenitiesSchema,
 } from '../amenities/schemas/amenities.schema';
 import { FloorPlans, FloorPlansSchema } from './schemas/floor-plans.schema';
-import { BroadcastUploadsService } from './broadcast-uploads.service';
+import { Documents, DocumentsSchema } from '../common/schemas/documents.schema';
 
 @Module({
   imports: [
@@ -19,10 +19,11 @@ import { BroadcastUploadsService } from './broadcast-uploads.service';
       { name: Rentals.name, schema: RentalsSchema },
       { name: Amenities.name, schema: AmenitiesSchema },
       { name: FloorPlans.name, schema: FloorPlansSchema },
+      { name: Documents.name, schema: DocumentsSchema },
     ]),
     LocationsModule,
   ],
   controllers: [PropertiesController],
-  providers: [PropertiesService, BroadcastUploadsService],
+  providers: [PropertiesService],
 })
 export class PropertiesModule {}

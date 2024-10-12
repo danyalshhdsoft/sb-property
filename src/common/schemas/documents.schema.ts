@@ -37,50 +37,50 @@ export class Documents extends Document {
   fileName: string;
   @Prop({
     required: true,
-    type: String,
+    type: Number,
   })
-  size: string;
+  size: number;
   @Prop({
-    required: true,
     type: String,
     enum: DOCUMENT_STATUS,
+    default: DOCUMENT_STATUS.ACTIVE,
   })
-  documentStatus: string;
+  documentStatus: DOCUMENT_STATUS;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Properties.name,
     default: null,
     // ref: 'Properties',
   })
-  property: mongoose.Schema.Types.ObjectId;
+  propertyId: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Projects.name,
     default: null,
     // ref: 'Projects',
   })
-  project: mongoose.Schema.Types.ObjectId;
+  projectId: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: FloorPlans.name,
     default: null,
     // ref: 'FloorPlans',
   })
-  floorPlan: mongoose.Schema.Types.ObjectId;
+  floorPlanId: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Rentals.name,
     default: null,
     // ref: 'FloorPlans',
   })
-  rentals: mongoose.Schema.Types.ObjectId;
+  rentalsId: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Developers.name,
     default: null,
     // ref: 'Developers',
   })
-  developer: mongoose.Schema.Types.ObjectId;
+  developerId: mongoose.Schema.Types.ObjectId;
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

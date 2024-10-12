@@ -25,20 +25,6 @@ import {
           },
         },
       },
-      {
-        name: CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE,
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: KAFKA_OPTIONS_CLIENT_ID.uploads_service,
-            //brokers: ['host.docker.internal:9092'],
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: KAFKA_CONSUMER_GROUP_ID.uploads_consumer,
-          },
-        },
-      },
     ]),
     MongooseModule.forFeature([
       { name: Documents.name, schema: DocumentsSchema },

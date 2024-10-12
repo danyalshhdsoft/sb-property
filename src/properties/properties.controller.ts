@@ -1,31 +1,21 @@
-import { Controller, Inject, OnModuleInit } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
-import { ClientKafka, MessagePattern } from '@nestjs/microservices';
-import {
-  CLIENTS_MODULE_KAFKA_NAME_PROPERTY,
-  KAFKA_PROPERTIES_TOPIC,
-} from '../utils/constants/kafka-const';
+import { MessagePattern } from '@nestjs/microservices';
+import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
 @Controller('properties')
 // @UseGuards(AuthGuard)
-export class PropertiesController implements OnModuleInit {
-  constructor(
-    private readonly propertiesService: PropertiesService,
-    @Inject(CLIENTS_MODULE_KAFKA_NAME_PROPERTY.UPLOADS_SERVICE)
-    private uploadsClient: ClientKafka,
-  ) {}
+export class PropertiesController {
+  constructor(private readonly propertiesService: PropertiesService) {}
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
   async addNewPropertyByAdmin(data: any) {
-    const { oPropertyRequest } = data;
-    return await this.propertiesService.addNewPropertyByAdmin(oPropertyRequest);
-  }
-
-  @MessagePattern('test-uploads')
-  async testUploadFile(data: any) {
-    const { oPropertyRequest } = data;
-    return await this.propertiesService.testUploadFile(oPropertyRequest);
+    const { oPropertyRequest, imagesMeta } = data;
+    return await this.propertiesService.addNewPropertyByAdmin(
+      oPropertyRequest,
+      imagesMeta,
+    );
   }
 
   // @Post('add-properties')
@@ -89,10 +79,4 @@ export class PropertiesController implements OnModuleInit {
   //   const result = await this.propertiesService.deletePropertyFromList(id);
   //   return new ApiResponse(result);
   // }
-
-  onModuleInit() {
-    this.uploadsClient.subscribeToResponseOf(
-      KAFKA_PROPERTIES_TOPIC.upload_files,
-    );
-  }
 }

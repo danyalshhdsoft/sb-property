@@ -53,6 +53,10 @@ class PropertyDocument {
   @IsString({ each: true })
   @IsUrl({}, { each: true })
   videos: string[];
+
+  @IsObject()
+  @IsOptional()
+  imagesMeta?: object;
 }
 
 // class LegalDocuments {
