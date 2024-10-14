@@ -16,6 +16,7 @@ export class ElasticsearchService {
       });
     } catch (oError) {
       throw oError;
+      console.log(oError);
     }
   }
 
