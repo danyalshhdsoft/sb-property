@@ -19,12 +19,18 @@ export class PropertyType extends Document {
 
   @Prop({
     required: true,
+    type: String,
+  })
+  googlePlaceType: string;
+
+  @Prop({
+    default: false,
     type: Boolean,
   })
   isFurnishable: boolean;
 
   @Prop({
-    required: true,
+    default: true,
     type: Boolean,
   })
   isActive: boolean;

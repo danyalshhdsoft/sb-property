@@ -12,6 +12,10 @@ import {
 import { FloorPlans, FloorPlansSchema } from './schemas/floor-plans.schema';
 import { Documents, DocumentsSchema } from '../common/schemas/documents.schema';
 import { ElasticSearchModule } from '../elasticsearch/elasticsearch.module';
+import {
+  PropertyType,
+  PropertyTypesSchema,
+} from '../common/schemas/property-type.schema';
 
 @Module({
   imports: [
@@ -21,6 +25,7 @@ import { ElasticSearchModule } from '../elasticsearch/elasticsearch.module';
       { name: Amenities.name, schema: AmenitiesSchema },
       { name: FloorPlans.name, schema: FloorPlansSchema },
       { name: Documents.name, schema: DocumentsSchema },
+      { name: PropertyType.name, schema: PropertyTypesSchema },
     ]),
     LocationsModule,
     ElasticSearchModule,

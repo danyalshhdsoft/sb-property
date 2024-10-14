@@ -19,6 +19,7 @@ import { FloorPlans } from './schemas/floor-plans.schema';
 import { Documents } from '../common/schemas/documents.schema';
 import { FileDocumentDTO } from '../common/dto/create-document.dto';
 import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
+import { PropertyType } from '../common/schemas/property-type.schema';
 
 @Injectable()
 export class PropertiesService {
@@ -34,6 +35,8 @@ export class PropertiesService {
     private FloorPlansModel: Model<FloorPlans>,
     @InjectModel(Documents.name)
     private DocumentsModel: Model<Documents>,
+    @InjectModel(PropertyType.name)
+    private PropertyTypesModel: Model<PropertyType>,
     private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
@@ -143,13 +146,23 @@ export class PropertiesService {
 
       //check for building embedded document field in schema to save
       const newProperty = await this.PropertiesModel.create(oPropertyRequests);
+      if (!newProperty) {
+        throw new NotFoundException(`Could not create new property`);
+      }
+      const oPropertyType = await this.PropertyTypesModel.findOne({
+        _id: newProperty.propertyType,
+      }).lean();
       const updateImageMeta = imagesMeta.map((obj) =>
         Object.assign({}, obj, { propertyId: newProperty._id }),
       );
       await this.savePropertyDocumentsMetaData(updateImageMeta);
       //console.log(JSON.stringify(newProperty));
 
-      const searchableDocument = this._constructDocument(oPropertyRequests);
+      const searchableDocument = this._constructDocument(
+        newProperty,
+        oAddLocationData,
+        oPropertyType,
+      );
       await this.elasticsearchService.indexDocument(
         'properties',
         newProperty._id.toString(),
@@ -195,21 +208,21 @@ export class PropertiesService {
     }
   }
 
-  _constructDocument(oPropertyRequests) {
+  _constructDocument(newProperty, oAddLocationData, oPropertyType) {
     return {
-      washroom: oPropertyRequests.washrooms,
-      bedroom: oPropertyRequests.bedrooms,
-      area: oPropertyRequests.local[0].metadata.vicinity,
-      building: oPropertyRequests.local[0].metadata.name,
-      price: oPropertyRequests.price,
-      purpose: oPropertyRequests.purpose,
-      status: oPropertyRequests.status,
-      propertyType: oPropertyRequests.subCategory.categoryType,
-      completionStatus: oPropertyRequests.completionStatus,
-      publishedAt: oPropertyRequests.publishedAt,
-      squareFeet: oPropertyRequests.squareFeet,
-      description: oPropertyRequests.description,
-      propertyListingTitle: oPropertyRequests.propertyListingPrice,
+      washroom: newProperty.washrooms,
+      bedroom: newProperty.bedrooms,
+      area: oAddLocationData?.oLocals.metadata.vicinity,
+      building: oAddLocationData?.oLocals.metadata.name,
+      price: newProperty.price,
+      purpose: newProperty.purpose,
+      status: newProperty.status,
+      propertyType: oPropertyType.category,
+      completionStatus: newProperty.completionStatus,
+      publishedAt: newProperty.publishedAt,
+      squareFeet: newProperty.squareFeet.totalAreaInSquareFeet,
+      description: newProperty.description,
+      propertyListingTitle: newProperty.title,
     };
   }
 
