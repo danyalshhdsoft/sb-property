@@ -8,6 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { LocationsModule } from './locations/location.module';
 import { PropertiesModule } from './properties/properties.module';
 import { CommonModule } from './common/common.module';
+import { ElasticSearchModule } from './elasticsearch/elasticsearch.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
@@ -32,6 +33,7 @@ import { CommonModule } from './common/common.module';
     ProjectsModule,
     LocationsModule,
     PropertiesModule,
+    ElasticSearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

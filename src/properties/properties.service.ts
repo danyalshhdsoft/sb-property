@@ -18,6 +18,8 @@ import { Amenities } from '../amenities/schemas/amenities.schema';
 import { FloorPlans } from './schemas/floor-plans.schema';
 import { Documents } from '../common/schemas/documents.schema';
 import { FileDocumentDTO } from '../common/dto/create-document.dto';
+import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
+
 @Injectable()
 export class PropertiesService {
   constructor(
@@ -32,6 +34,7 @@ export class PropertiesService {
     private FloorPlansModel: Model<FloorPlans>,
     @InjectModel(Documents.name)
     private DocumentsModel: Model<Documents>,
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
   async addNewRentalsData(oRentalData: RentalsSchemaDTO) {
@@ -144,6 +147,15 @@ export class PropertiesService {
         Object.assign({}, obj, { propertyId: newProperty._id }),
       );
       await this.savePropertyDocumentsMetaData(updateImageMeta);
+      //console.log(JSON.stringify(newProperty));
+
+      const searchableDocument = this._constructDocument(oPropertyRequests);
+      await this.elasticsearchService.indexDocument(
+        'properties',
+        newProperty._id.toString(),
+        searchableDocument,
+      );
+
       return {
         status: 200,
         data: newProperty,
@@ -181,6 +193,24 @@ export class PropertiesService {
     } catch (oError) {
       throw oError;
     }
+  }
+
+  _constructDocument(oPropertyRequests) {
+    return {
+      washroom: oPropertyRequests.washrooms,
+      bedroom: oPropertyRequests.bedrooms,
+      area: oPropertyRequests.local[0].metadata.vicinity,
+      building: oPropertyRequests.local[0].metadata.name,
+      price: oPropertyRequests.price,
+      purpose: oPropertyRequests.purpose,
+      status: oPropertyRequests.status,
+      propertyType: oPropertyRequests.subCategory.categoryType,
+      completionStatus: oPropertyRequests.completionStatus,
+      publishedAt: oPropertyRequests.publishedAt,
+      squareFeet: oPropertyRequests.squareFeet,
+      description: oPropertyRequests.description,
+      propertyListingTitle: oPropertyRequests.propertyListingPrice,
+    };
   }
 
   async updatePropertyByAdmin(
@@ -291,6 +321,13 @@ export class PropertiesService {
         );
         await this.savePropertyDocumentsMetaData(updateImageMeta);
       }
+
+      await this.elasticsearchService.updateDocument(
+        'properties',
+        id,
+        propertyRequests,
+      );
+
       return {
         status: 200,
         data: oUpdateProperty,
@@ -369,5 +406,125 @@ export class PropertiesService {
     } catch (oError) {
       throw new RpcException(oError);
     }
+  }
+
+  async searchProperties(
+    query: string,
+    bedroom: string,
+    washroom: string,
+    purpose: string,
+    status: string,
+    completionStatus: string,
+    propertyType: string,
+    minprice: string,
+    maxprice: string,
+    from: number,
+    size: number,
+  ): Promise<any> {
+    const searchQuery = {
+      query: { bool: { must: [], filter: {} } },
+    };
+
+    this._buildQuery(
+      searchQuery,
+      query,
+      bedroom,
+      washroom,
+      purpose,
+      status,
+      completionStatus,
+      propertyType,
+      minprice,
+      maxprice,
+    );
+
+    return {
+      status: 200,
+      data: await this.elasticsearchService.search(
+        searchQuery,
+        from,
+        size,
+        'properties',
+      ),
+    };
+  }
+
+  _buildQuery(
+    searchQuery,
+    query,
+    bedroom,
+    washroom,
+    purpose,
+    status,
+    completionStatus,
+    propertyType,
+    minprice = '0',
+    maxprice = '5000000',
+  ) {
+    if (query) {
+      searchQuery.query.bool.must.push({
+        multi_match: {
+          query,
+          fields: ['area', 'building'],
+        },
+      });
+    }
+
+    if (bedroom) {
+      searchQuery.query.bool.must.push({
+        match: {
+          bedrooms: bedroom,
+        },
+      });
+    }
+
+    if (washroom) {
+      searchQuery.query.bool.must.push({
+        match: {
+          washrooms: washroom,
+        },
+      });
+    }
+
+    if (purpose) {
+      searchQuery.query.bool.must.push({
+        match: {
+          purpose: purpose,
+        },
+      });
+    }
+
+    if (status) {
+      searchQuery.query.bool.must.push({
+        match: {
+          status: status,
+        },
+      });
+    }
+
+    if (propertyType) {
+      searchQuery.query.bool.must.push({
+        match: {
+          propertyType: propertyType,
+        },
+      });
+    }
+
+    if (completionStatus) {
+      searchQuery.query.bool.must.push({
+        match: {
+          completionStatus: completionStatus,
+        },
+      });
+    }
+
+    searchQuery.query.bool.filter = {
+      range: {
+        price: {
+          gte: minprice,
+          lte: maxprice,
+        },
+      },
+    };
   }
 }

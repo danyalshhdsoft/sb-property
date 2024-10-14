@@ -3,11 +3,15 @@ import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
 import { MessagePattern } from '@nestjs/microservices';
-import { KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
+import { KAFKA_ELASTIC_SEARCH_TOPIC, KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
+import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
 @Controller('properties')
 // @UseGuards(AuthGuard)
 export class PropertiesController {
-  constructor(private readonly propertiesService: PropertiesService) {}
+  constructor(
+    private readonly propertiesService: PropertiesService,
+    private readonly elasticsearchService: ElasticsearchService
+  ) {}
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
   async addNewPropertyByAdmin(data: any) {
@@ -73,6 +77,31 @@ export class PropertiesController {
       data.id,
       data.data,
     );
+  }
+
+  @MessagePattern(KAFKA_ELASTIC_SEARCH_TOPIC.search)
+  async getProperties(data: any) {
+
+    const response = await this.propertiesService.searchProperties(
+      data.query,
+      data.bedroom,
+      data.washroom,
+      data.purpose,
+      data.status,
+      data.completionStatus,
+      data.propertyType,
+      data.minprice,
+      data.maxprice,
+      data.from,
+      data.size,
+    );
+    return response;
+  }
+
+  @MessagePattern(KAFKA_ELASTIC_SEARCH_TOPIC.searchAutocomplete)
+  async autocomplete(data: any) {
+    const results = await this.elasticsearchService.searchAutocomplete(data, 'properties');
+    return results;
   }
 
   // @Delete(':id')

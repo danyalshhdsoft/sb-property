@@ -11,6 +11,7 @@ import {
 } from '../amenities/schemas/amenities.schema';
 import { FloorPlans, FloorPlansSchema } from './schemas/floor-plans.schema';
 import { Documents, DocumentsSchema } from '../common/schemas/documents.schema';
+import { ElasticSearchModule } from '../elasticsearch/elasticsearch.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Documents, DocumentsSchema } from '../common/schemas/documents.schema';
       { name: Documents.name, schema: DocumentsSchema },
     ]),
     LocationsModule,
+    ElasticSearchModule,
   ],
   controllers: [PropertiesController],
   providers: [PropertiesService],
