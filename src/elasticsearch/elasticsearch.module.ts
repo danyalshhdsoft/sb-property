@@ -5,7 +5,8 @@ import { ElasticsearchService } from './elasticsearch.service';
 @Module({
   imports: [
     ElasticsearchModule.register({
-      node: 'https://localhost:9200', // Your Elasticsearch URL
+      node: 'https://localhost:9200', // Your Elasticsearch URL windows
+      // node: 'http://localhost:9200', // Your Elasticsearch URL linux
       tls: {
         rejectUnauthorized: false,
       },
