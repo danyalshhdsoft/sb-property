@@ -385,6 +385,8 @@ export class PropertiesService {
         { deletedAt: new Date() },
         { new: true },
       );
+      await this.elasticsearchService.deleteDocument('properties', id.toString());
+
       return {
         status: 200,
         data: [],
