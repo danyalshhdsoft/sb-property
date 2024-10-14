@@ -3,14 +3,20 @@ import { ElasticsearchService as NestElasticsearchService } from '@nestjs/elasti
 
 @Injectable()
 export class ElasticsearchService {
-  constructor(private readonly elasticsearchService: NestElasticsearchService) {}
+  constructor(
+    private readonly elasticsearchService: NestElasticsearchService,
+  ) {}
 
   async indexDocument(index: string, id: string, document: any) {
-    return await this.elasticsearchService.index({
-      index,
-      id,
-      body: document,
-    });
+    try {
+      return await this.elasticsearchService.index({
+        index,
+        id,
+        body: document,
+      });
+    } catch (oError) {
+      throw oError;
+    }
   }
 
   async updateDocument(index: string, id: string, document: any) {
