@@ -175,6 +175,7 @@ export class PropertiesService {
         message: 'Property added to the list successfully',
       };
     } catch (oError) {
+      console.log(oError);
       throw new RpcException(oError);
     }
   }
