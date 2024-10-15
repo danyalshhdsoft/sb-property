@@ -300,12 +300,13 @@ export class PropertiesService {
         };
       }
 
-      //UNTESTED LOGIC
       // Push new images into the media.images array if provided
-      if (propertyRequests.newImages && propertyRequests.newImages.length > 0) {
+      if (imagesMeta && imagesMeta.length > 0) {
         await this.PropertiesModel.updateOne(
           { _id: id },
-          { $push: { 'media.images': { $each: propertyRequests.newImages } } },
+          {
+            $push: { 'media.images': { $each: propertyRequests.media.images } },
+          },
         );
       }
 
@@ -386,7 +387,10 @@ export class PropertiesService {
         { deletedAt: new Date() },
         { new: true },
       );
-      await this.elasticsearchService.deleteDocument('properties', id.toString());
+      await this.elasticsearchService.deleteDocument(
+        'properties',
+        id.toString(),
+      );
 
       return {
         status: 200,
