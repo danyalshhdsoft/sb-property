@@ -218,7 +218,7 @@ export class PropertiesService {
       price: newProperty.price,
       purpose: newProperty.purpose,
       status: newProperty.status,
-      propertyType: oPropertyType.category,
+      propertyType: oPropertyType?.category,
       completionStatus: newProperty.completionStatus,
       publishedAt: newProperty.publishedAt,
       squareFeet: newProperty.squareFeet.totalAreaInSquareFeet,
