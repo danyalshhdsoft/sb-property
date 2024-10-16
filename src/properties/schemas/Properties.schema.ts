@@ -26,7 +26,7 @@ import { FloorPlans } from './floor-plans.schema';
 import { Buildings } from '@/src/common/schemas/buildings.schema';
 import { Cities } from '@/src/locations/schemas/city.schema';
 import { Locals } from '@/src/locations/schemas/locals.schema';
-import { PropertyType } from '@/src/common/schemas/property-type.schema';
+import { PropertyType } from '@/src/propertyTypes/schemas/property-type.schema';
 import {
   // LegalDocuments,
   PaymentPlan,

@@ -2,15 +2,18 @@ import { Controller } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 // import { AuthFlag } from '../common/decorators/auth-flag.decorator';
 // import { AuthGuard } from '../common/guards/auth.guard';
-import { MessagePattern } from '@nestjs/microservices';
-import { KAFKA_ELASTIC_SEARCH_TOPIC, KAFKA_PROPERTIES_TOPIC } from '../utils/constants/kafka-const';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  KAFKA_ELASTIC_SEARCH_TOPIC,
+  KAFKA_PROPERTIES_TOPIC,
+} from '../utils/constants/kafka-const';
 import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
 @Controller('properties')
 // @UseGuards(AuthGuard)
 export class PropertiesController {
   constructor(
     private readonly propertiesService: PropertiesService,
-    private readonly elasticsearchService: ElasticsearchService
+    private readonly elasticsearchService: ElasticsearchService,
   ) {}
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.add_properties)
@@ -54,8 +57,8 @@ export class PropertiesController {
   // }
 
   @MessagePattern(KAFKA_PROPERTIES_TOPIC.retrieve_properties)
-  async getAllPropertyLists() {
-    return await this.propertiesService.getAllPropertyLists();
+  async getAllPropertyLists(@Payload() data: any) {
+    return await this.propertiesService.getAllPropertyLists(data.admin);
   }
 
   // @Get()
@@ -81,7 +84,6 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_ELASTIC_SEARCH_TOPIC.search)
   async getProperties(data: any) {
-
     const response = await this.propertiesService.searchProperties(
       data.query,
       data.bedroom,
@@ -100,7 +102,10 @@ export class PropertiesController {
 
   @MessagePattern(KAFKA_ELASTIC_SEARCH_TOPIC.searchAutocomplete)
   async autocomplete(data: any) {
-    const results = await this.elasticsearchService.searchAutocomplete(data, 'properties');
+    const results = await this.elasticsearchService.searchAutocomplete(
+      data,
+      'properties',
+    );
     return results;
   }
 

@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { Properties } from './schemas/Properties.schema';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PROPERTY_REVIEW_STATUS } from './enums/properties.enum';
+// import { PROPERTY_REVIEW_STATUS } from './enums/properties.enum';
 import { LocationsService } from '../locations/location.service';
 import { RpcException } from '@nestjs/microservices';
 import {
@@ -19,7 +19,7 @@ import { FloorPlans } from './schemas/floor-plans.schema';
 import { Documents } from '../common/schemas/documents.schema';
 import { FileDocumentDTO } from '../common/dto/create-document.dto';
 import { ElasticsearchService } from '../elasticsearch/elasticsearch.service';
-import { PropertyType } from '../common/schemas/property-type.schema';
+import { PropertyType } from '../propertyTypes/schemas/property-type.schema';
 
 @Injectable()
 export class PropertiesService {
@@ -353,12 +353,77 @@ export class PropertiesService {
     }
   }
 
-  async getAllPropertyLists() {
+  async getAllPropertyLists(admin: any) {
     try {
-      const aPropertyLists = await this.PropertiesModel.find({
-        reviewStatus: PROPERTY_REVIEW_STATUS.APPROVED,
-        deletedAt: { $eq: null },
-      }).exec();
+      const pipeline = [
+        {
+          $match:
+            /**
+             * query: The query in MQL.
+             */
+            {
+              // listingOwner: new mongoose.Schema.Types.ObjectId(
+              //   '670e77b8d6a3256add21c73c',
+              // ),
+              deletedAt: {
+                $eq: null,
+              },
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'propertytypes',
+              localField: 'propertyType',
+              foreignField: '_id',
+              as: 'propertyTypes',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$propertyTypes',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $project:
+            /**
+             * specifications: The fields to
+             *   include or exclude.
+             */
+            {
+              title: 1,
+              propertyType: '$propertyTypes.parentType',
+              category: '$propertyTypes.category',
+              bedrooms: 1,
+              squareFeet: {
+                $toInt: '$squareFeet.totalAreaInSquareFeet',
+              },
+              address: 1,
+              referenceNo: 1,
+              status: 1,
+              permitNumber: 1,
+              updatedAt: 1,
+              listedOwner: admin?.fullname,
+            },
+        },
+      ];
+      const aPropertyLists = await this.PropertiesModel.aggregate(pipeline);
       return {
         status: 200,
         data: aPropertyLists,

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { LicenseCriteria } from '../interface/property-schema.interface';
-import { PropertyType } from '@/src/common/schemas/property-type.schema';
+import { PropertyType } from '@/src/propertyTypes/schemas/property-type.schema';
 import {
   PROPERTY_COMPLETION_STATUS,
   PROPERTY_LICENSE_STATUS,

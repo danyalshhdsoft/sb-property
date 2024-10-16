@@ -15,7 +15,7 @@ import { ElasticSearchModule } from '../elasticsearch/elasticsearch.module';
 import {
   PropertyType,
   PropertyTypesSchema,
-} from '../common/schemas/property-type.schema';
+} from '../propertyTypes/schemas/property-type.schema';
 
 @Module({
   imports: [

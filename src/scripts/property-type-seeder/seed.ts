@@ -1,4 +1,4 @@
-import { PropertyType } from '@/src/common/schemas/property-type.schema';
+import { PropertyType } from '@/src/propertyTypes/schemas/property-type.schema';
 import { INestApplicationContext } from '@nestjs/common';
 import { Model } from 'mongoose';
 

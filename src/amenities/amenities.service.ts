@@ -15,6 +15,7 @@ export class AmenitiesService {
     try {
       const aAmenities = await this.AmenitiesModel.find({
         deletedAt: { $eq: null },
+        display: true,
       });
       return {
         status: 200,

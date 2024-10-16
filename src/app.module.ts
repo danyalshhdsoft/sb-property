@@ -9,6 +9,8 @@ import { LocationsModule } from './locations/location.module';
 import { PropertiesModule } from './properties/properties.module';
 import { CommonModule } from './common/common.module';
 import { ElasticSearchModule } from './elasticsearch/elasticsearch.module';
+import { PropertyTypesModule } from './propertyTypes/property-types.module';
+import { AmenitiesModule } from './amenities/amenities.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
@@ -34,6 +36,8 @@ import { ElasticSearchModule } from './elasticsearch/elasticsearch.module';
     LocationsModule,
     PropertiesModule,
     ElasticSearchModule,
+    PropertyTypesModule,
+    AmenitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
