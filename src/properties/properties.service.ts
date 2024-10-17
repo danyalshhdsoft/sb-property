@@ -302,12 +302,18 @@ export class PropertiesService {
 
       // Push new images into the media.images array if provided
       if (imagesMeta && imagesMeta.length > 0) {
-        await this.PropertiesModel.updateOne(
+        const updatedImages = await this.PropertiesModel.findOneAndUpdate(
           { _id: id },
           {
             $push: { 'media.images': { $each: propertyRequests.media.images } },
           },
+          {
+            new: true,
+          },
         );
+        console.log(updatedImages);
+        propertyRequests.media = updatedImages.media;
+        //prepare propertyRequest.media.images here so the main update can be done smoothly
       }
 
       // Remove specific images from the media.images array if provided
@@ -315,10 +321,21 @@ export class PropertiesService {
         propertyRequests.removeImages &&
         propertyRequests.removeImages.length > 0
       ) {
-        await this.PropertiesModel.updateOne(
-          { _id: id },
-          { $pull: { 'media.images': { $in: propertyRequests.removeImages } } },
+        let aExistingValidImages = propertyRequests.removeImages;
+        aExistingValidImages = propertyRequests.removeImages.filter((image) =>
+          oExistingProperty.media.images.includes(image),
         );
+
+        const removedImages = await this.PropertiesModel.findOneAndUpdate(
+          { _id: id },
+          { $pull: { 'media.images': { $in: aExistingValidImages } } },
+          {
+            new: true,
+          },
+        );
+        console.log(removedImages);
+        propertyRequests.media = removedImages.media;
+        //prepare propertyRequest.media.images here so the main update can be done smoothly
       }
 
       const oUpdateProperty = await this.PropertiesModel.findByIdAndUpdate(
