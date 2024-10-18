@@ -27,6 +27,7 @@ import {
   PROPERTY_RENTAL_FREQUENCY,
   PROPERTY_RESIDENCE_TYPES,
 } from '../enums/properties.enum';
+import { Types } from 'mongoose';
 // import { AmenitiesOptions } from '@/src/common/interfaces/amenities-options.interface';
 
 export interface SquareFeet {
@@ -215,6 +216,10 @@ export class RentalsSchemaDTO {
   occupancyOption?: string;
 }
 class AmenitiesOptionsDTO {
+  @IsString()
+  @IsMongoId()
+  amenitiesOptionSelected: Types.ObjectId;
+
   @IsOptional()
   @IsString()
   code: string;
@@ -251,6 +256,10 @@ class AmenitiesOptionsDTO {
   required: boolean;
 }
 export class AmenitiesSchemaDTO {
+  @IsString()
+  @IsMongoId()
+  amenitiesSelected: Types.ObjectId;
+
   @IsOptional()
   @IsString()
   title?: string;

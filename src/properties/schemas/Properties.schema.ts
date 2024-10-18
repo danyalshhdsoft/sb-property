@@ -34,10 +34,11 @@ import {
   PropertyDocument,
   SquareFeet,
 } from '../interface/property-schema.interface';
+
 import {
-  Amenities,
-  AmenitiesSchema,
-} from '@/src/amenities/schemas/amenities.schema';
+  SubDocumentAmenities,
+  SubDocumentAmenitiesSchema,
+} from '@/src/common/schemas/amenities-sub-doc.schema';
 // import { PropertyLicenses } from './property-license.schema';
 
 @Schema({ timestamps: true })
@@ -277,8 +278,8 @@ export class Properties extends Document {
   })
   hasAttachedBathroom: boolean;
 
-  @Prop({ type: [AmenitiesSchema], default: [] })
-  amenities: Amenities[];
+  @Prop({ type: [SubDocumentAmenitiesSchema], default: [] })
+  amenities: SubDocumentAmenities[];
 
   @Prop({
     type: Number,

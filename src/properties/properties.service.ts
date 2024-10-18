@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { Properties } from './schemas/Properties.schema';
@@ -379,9 +379,9 @@ export class PropertiesService {
              * query: The query in MQL.
              */
             {
-              // listingOwner: new mongoose.Schema.Types.ObjectId(
-              //   '670e77b8d6a3256add21c73c',
-              // ),
+              listingOwner: new mongoose.Schema.Types.ObjectId(
+                '670e77b8d6a3256add21c73c',
+              ),
               deletedAt: {
                 $eq: null,
               },
@@ -445,6 +445,383 @@ export class PropertiesService {
         status: 200,
         data: aPropertyLists,
         message: 'Property retrieved successfully',
+      };
+    } catch (oError) {
+      throw new RpcException(oError);
+    }
+  }
+
+  async getPropertiesById(id: string) {
+    try {
+      const pipeline = [
+        {
+          $match:
+            /**
+             * query: The query in MQL.
+             */
+            {
+              _id: new mongoose.Types.ObjectId(id),
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'propertytypes',
+              localField: 'propertyType',
+              foreignField: '_id',
+              as: 'propertyTypes',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$propertyTypes',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'rentals',
+              localField: 'rental',
+              foreignField: '_id',
+              as: 'rentalDetails',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$rentalDetails',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'locations',
+              localField: 'location',
+              foreignField: '_id',
+              as: 'locationMeta',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$locationMeta',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$amenities',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'amenities',
+              localField: 'amenities.amenitiesSelected',
+              foreignField: '_id',
+              as: 'amenitiesFull',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$amenitiesFull',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$amenities.options',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $lookup:
+            /**
+             * from: The target collection.
+             * localField: The local join field.
+             * foreignField: The target join field.
+             * as: The name for the results.
+             * pipeline: Optional pipeline to run on the foreign collection.
+             * let: Optional variables to use in the pipeline field stages.
+             */
+            {
+              from: 'amenities',
+              localField: 'amenities.options.amenitiesOptionSelected',
+              foreignField: 'options._id',
+              as: 'optionsFull',
+            },
+        },
+        {
+          $unwind:
+            /**
+             * path: Path to the array field.
+             * includeArrayIndex: Optional name for index.
+             * preserveNullAndEmptyArrays: Optional
+             *   toggle to unwind null and empty values.
+             */
+            {
+              path: '$optionsFull',
+              preserveNullAndEmptyArrays: true,
+            },
+        },
+        {
+          $addFields:
+            /**
+             * newField: The new field name.
+             * expression: The new field expression.
+             */
+            {
+              'amenities.fullData': '$amenitiesFull',
+              'amenities.options.fullData': '$optionsFull',
+            },
+        },
+        {
+          $group:
+            /**
+             * _id: The id of the group.
+             * fieldN: The first field name.
+             */
+            {
+              _id: '$_id',
+              amenities: {
+                $push: '$amenities',
+              },
+              propertyTypes: {
+                $first: '$propertyTypes',
+              },
+              title: {
+                $first: '$title',
+              },
+              titleDeed: {
+                $first: '$titleDeed',
+              },
+              titleArabic: {
+                $first: '$titleArabic',
+              },
+              slug: {
+                $first: '$slug',
+              },
+              description: {
+                $first: '$description',
+              },
+              descriptionArabic: {
+                $first: '$descriptionArabic',
+              },
+              purpose: {
+                $first: '$purpose',
+              },
+              ownershipStatus: {
+                $first: '$ownershipStatus',
+              },
+              ownershipNationality: {
+                $first: '$ownershipNationality',
+              },
+              tenancyForYears: {
+                $first: '$tenancyForYears',
+              },
+              completionStatus: {
+                $first: '$completionStatus',
+              },
+              offplanSaleType: {
+                $first: '$offplanSaleType',
+              },
+              financingAvailability: {
+                $first: '$financingAvailability',
+              },
+              financingInstitute: {
+                $first: '$financingInstitute',
+              },
+              rentalDetails: {
+                $first: '$rentalDetails',
+              },
+              referenceNo: {
+                $first: '$referenceNo',
+              },
+              squareFeet: {
+                $first: '$squareFeet',
+              },
+              serviceCharge: {
+                $first: '$serviceCharge',
+              },
+              locationMeta: {
+                $first: '$locationMeta',
+              },
+              status: {
+                $first: '$status',
+              },
+              reviewStatus: {
+                $first: '$reviewStatus',
+              },
+              availability: {
+                $first: '$availability',
+              },
+              unavailabliltyReason: {
+                $first: '$unavailabliltyReason',
+              },
+              availableDate: {
+                $first: '$availableDate',
+              },
+              publishStatus: {
+                $first: '$publishStatus',
+              },
+              publishedAt: {
+                $first: '$publishedAt',
+              },
+              bedrooms: {
+                $first: '$bedrooms',
+              },
+              parkingSlots: {
+                $first: '$parkingSlots',
+              },
+              isFurnished: {
+                $first: '$isFurnished',
+              },
+              washrooms: {
+                $first: '$washrooms',
+              },
+              hasBalcony: {
+                $first: '$hasBalcony',
+              },
+              hasAttachedBathroom: {
+                $first: '$hasAttachedBathroom',
+              },
+              price: {
+                $first: '$price',
+              },
+              currency: {
+                $first: '$currency',
+              },
+              tenancyWayOfPayments: {
+                $first: '$tenancyWayOfPayments',
+              },
+              developer: {
+                $first: '$developer',
+              },
+              paymentPlan: {
+                $first: '$paymentPlan',
+              },
+              paymentOptions: {
+                $first: '$paymentOptions',
+              },
+              projectTimeline: {
+                $first: '$projectTimeline',
+              },
+              handoverDate: {
+                $first: '$handoverDate',
+              },
+              permitType: {
+                $first: '$permitType',
+              },
+              permitNumber: {
+                $first: '$permitNumber',
+              },
+              media: {
+                $first: '$media',
+              },
+              floorPlan: {
+                $first: '$floorPlan',
+              },
+              listingOwner: {
+                $first: '$listingOwner',
+              },
+              deletedAt: {
+                $first: '$deletedAt',
+              },
+              paidBy: {
+                $first: '$paidBy',
+              },
+              createdAt: {
+                $first: '$createdAt',
+              },
+              updatedAt: {
+                $first: '$updatedAt',
+              },
+            },
+        },
+      ];
+      const aProperty = await this.PropertiesModel.aggregate(pipeline);
+      if (!aProperty || aProperty.length === 0) {
+        throw new NotFoundException('Property not found');
+      }
+      return {
+        status: 200,
+        data: aProperty[0],
+        message: `${aProperty[0]['title']} Property retrieved successfully`,
       };
     } catch (oError) {
       throw new RpcException(oError);

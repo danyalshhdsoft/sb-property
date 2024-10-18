@@ -61,6 +61,11 @@ export class PropertiesController {
     return await this.propertiesService.getAllPropertyLists(data.admin);
   }
 
+  @MessagePattern(KAFKA_PROPERTIES_TOPIC.get_property_by_id)
+  async getPropertiesById(@Payload() data: any) {
+    return await this.propertiesService.getPropertiesById(data.id);
+  }
+
   // @Get()
   // @AuthFlag('privateRoute')
   // async getAllPropertyLists() {
